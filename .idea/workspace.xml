@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bc653279-bfd9-4035-82f2-c25b17759979" name="Default Changelist" comment="" />
+    <list default="true" id="bc653279-bfd9-4035-82f2-c25b17759979" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,6 +32,14 @@
       <option name="presentableId" value="Default" />
       <updated>1588249240541</updated>
     </task>
+    <task id="LOCAL-00001" summary="- add model patient/practitioner/patientList&#10;- add UI components for user input id &amp; get patients">
+      <created>1588477781557</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1588477781558</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
 </project>

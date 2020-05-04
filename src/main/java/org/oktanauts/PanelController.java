@@ -28,7 +28,7 @@ public class PanelController implements Initializable {
 
     @FXML
     private void switchToPrimary() throws IOException {
-        App.setRoot("primary");
+        App.setRoot("userLogin");
     }
 
     @Override

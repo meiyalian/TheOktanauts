@@ -24,7 +24,7 @@ public class MainPanelController  {
         Iterator iter = patients.getIterator();
         while (iter.hasNext()){
             Patient p = (Patient) iter.next();
-            String pID = p.getId();
+            String pID = p.getName();
             patientListView.getItems().add(pID);
         }
 

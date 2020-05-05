@@ -1,33 +1,33 @@
 package org.oktanauts;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.oktanauts.model.GetPatientsServiceModel;
+import org.oktanauts.model.GetPractitionerModel;
 import org.oktanauts.model.Objects.Practitioner;
 
 
-public class UserLoginController implements getPatientsCallback {
+public class UserLoginController implements getPractitionerCallback {
 
 //    private Practitioner user;
 
 
-    GetPatientsServiceModel getPatientService = new GetPatientsServiceModel();
+    GetPractitionerModel getPractitionerService = new GetPractitionerModel();
 
     @FXML
     public TextField idInput;
     @FXML
 
-    private void enter(ActionEvent e) throws IOException {
+    private void enter(ActionEvent e) throws IOException, ParseException {
         if (isValidate(idInput)){
-            getPatientService.retrievePatients(idInput.getText(), this);
+            getPractitionerService.retrievePatients(idInput.getText(), this);
         }
 
 

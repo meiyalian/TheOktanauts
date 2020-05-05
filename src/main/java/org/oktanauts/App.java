@@ -17,19 +17,24 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage stage;
+
 
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("userLogin"));
+        this.stage = stage;
+
         stage.setScene(scene);
         stage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
+    // for page navigation
+    public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
 
-    static void setRoot(FXMLLoader fxmlLoader) throws IOException {
+    public static void setRoot(FXMLLoader fxmlLoader) throws IOException {
         scene.setRoot(fxmlLoader.load());
     }
 
@@ -38,9 +43,15 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
-    public static void main(String[] args) {
+    public static Stage getStage(){
+        return stage;
+    }
 
+
+    public static void main(String[] args) {
         launch();
     }
+
+
 
 }

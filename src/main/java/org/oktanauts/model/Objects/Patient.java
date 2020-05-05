@@ -1,4 +1,4 @@
-package org.oktanauts.model;
+package org.oktanauts.model.Objects;
 
 import java.util.Date;
 
@@ -12,6 +12,7 @@ public class Patient {
     private String city;
     private String state;
     private String country;
+    private boolean isSelected = false;
 
 
     public Patient(String id, Date birthday, String gender, String city, String state, String country) {
@@ -21,9 +22,12 @@ public class Patient {
         this.city = city;
         this.state = state;
         this.country = country;
+
     }
 
-    public Patient(String id){}
+    public Patient(String id){
+        this.id = id;
+    }
 
     public String getId() {
         return id;

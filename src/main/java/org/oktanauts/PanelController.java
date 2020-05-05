@@ -11,16 +11,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import org.oktanauts.model.Patient;
-import org.oktanauts.model.Practitioner;
+import org.oktanauts.model.Objects.Patient;
+import org.oktanauts.model.Objects.Practitioner;
 
-public class PanelController implements Initializable {
 
-    private Practitioner user;
+public class PanelController implements Initializable{
 
-    public PanelController(Practitioner currentUser) {
-        user = currentUser;
-    }
+//    private Practitioner user;
+//
+//    public PanelController(Practitioner currentUser) {
+//        user = currentUser;
+//    }
     @FXML
     Label idLabel;
     public ListView<Patient> patientListView;
@@ -33,9 +34,11 @@ public class PanelController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        idLabel.setText(user.getId());
-        patients = FXCollections.observableArrayList(user.getPatients());
-        patientListView.setItems(patients);
-        patientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+//        idLabel.setText(user.getId());
+//        patients = FXCollections.observableArrayList(user.getPatients());
+//        patientListView.setItems(patients);
+//        patientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
+
+
 }

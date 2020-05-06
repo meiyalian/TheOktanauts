@@ -1,11 +1,12 @@
-package org.oktanauts.model.Objects;
+package org.oktanauts.model;
 
-import org.oktanauts.model.Objects.Patient;
-import org.oktanauts.model.Objects.Iterator;
+import org.oktanauts.model.Aggregate;
+import org.oktanauts.model.Iterator;
+import org.oktanauts.model.Patient;
 
 import java.util.ArrayList;
 
-public class PatientList implements Aggregate{
+public class PatientList implements Aggregate {
     private ArrayList<Patient> patients= new ArrayList<>();
     private String practitionerId;
 

@@ -1,13 +1,12 @@
 package org.oktanauts;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import org.oktanauts.model.Objects.Patient;
-import org.oktanauts.model.Objects.PatientList;
-import org.oktanauts.model.Objects.Practitioner;
-import org.oktanauts.model.Objects.Iterator;
+import org.oktanauts.model.Patient;
+import org.oktanauts.model.PatientList;
+import org.oktanauts.model.Practitioner;
+import org.oktanauts.model.Iterator;
 
 public class MainPanelController  {
     private Practitioner practitioner;

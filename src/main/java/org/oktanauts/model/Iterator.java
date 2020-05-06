@@ -1,4 +1,4 @@
-package org.oktanauts.model.Objects;
+package org.oktanauts.model;
 
 public interface Iterator {
     boolean hasNext();

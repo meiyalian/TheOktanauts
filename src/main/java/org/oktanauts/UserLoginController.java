@@ -11,32 +11,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.oktanauts.model.GetPractitionerModel;
-import org.oktanauts.model.Objects.Practitioner;
+import org.oktanauts.model.Practitioner;
+import org.oktanauts.model.GetPractitionerCallback;
 
 
-public class UserLoginController implements getPractitionerCallback {
-
-//    private Practitioner user;
+public class UserLoginController implements GetPractitionerCallback {
 
 
     GetPractitionerModel getPractitionerService = new GetPractitionerModel();
 
-    @FXML
-    public TextField idInput;
-    @FXML
+    @FXML public TextField idInput;
 
+    @FXML
     private void enter(ActionEvent e) throws IOException, ParseException {
         if (isValidate(idInput)){
-            getPractitionerService.retrievePatients(idInput.getText(), this);
+            getPractitionerService.retrievePractitioner(idInput.getText(), this);
         }
 
-
-//        user = new Practitioner(idInput.getText());
-//        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/org/oktanauts/panel.fxml"));
-//        PanelController panelController = new PanelController(user);
-//        //set controller for panel
-//        fxmlLoader.setController(panelController);
-//        App.setRoot(fxmlLoader);
 
     }
 

@@ -1,6 +1,7 @@
-package org.oktanauts.model.Objects;
+package org.oktanauts.model;
 
-import java.util.ArrayList;
+import org.oktanauts.model.Patient;
+import org.oktanauts.model.PatientList;
 
 public class Practitioner {
 

@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import org.oktanauts.model.Objects.Patient;
-import org.oktanauts.model.Objects.Practitioner;
+import org.oktanauts.model.Patient;
 
 
 public class PanelController implements Initializable{

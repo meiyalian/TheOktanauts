@@ -1,10 +1,6 @@
 package org.oktanauts.model;
 
 import org.json.JSONArray;
-import org.oktanauts.getPractitionerCallback;
-import org.oktanauts.model.Objects.Patient;
-import org.oktanauts.model.Objects.PatientList;
-import org.oktanauts.model.Objects.Practitioner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +12,12 @@ import java.nio.charset.Charset;
 
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashSet;
 
 
-public class GetPractitionerModel implements GetPractitionerService {
+public class GetPractitionerModel implements GetPractitionerService{
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -30,25 +27,22 @@ public class GetPractitionerModel implements GetPractitionerService {
         return sb.toString();
     }
 
-    @Override
-    public void retrievePatients(String practitionerID, getPractitionerCallback callback) throws IOException, ParseException {
 
-        //replace this block with http request,
-        // after getting all the patients, create patient objects, add them to a patientList object
-        //and then create a practitoner with practitioner id and the patientlist
-        //lastely do callback.updateUI(practitioner)
+
+    @Override
+    public void retrievePractitioner(String practitionerID, GetPractitionerCallback callback) throws IOException, ParseException {
 
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant=" + practitionerID + "&_format=json";
         boolean finished = false;
         PatientList patients = new PatientList(practitionerID);
-        HashSet<String> patientIds = new HashSet<String>();
+        HashSet<String> patientIds = new HashSet<>();
 
         while (!finished) {
             System.out.println(url);
             InputStream is = new URL(url).openStream();
 
             try {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String jsonText = readAll(rd);
                 //System.out.println(jsonText);
                 JSONObject json = new JSONObject(jsonText);
@@ -56,11 +50,14 @@ public class GetPractitionerModel implements GetPractitionerService {
                 JSONArray entries = json.getJSONArray("entry");
 
                 String patientId;
+                GetPatientService createPatient = new GetPatientModel();
                 for (int i = 0; i < entries.length(); i++) {
                     patientId = entries.getJSONObject(i).getJSONObject("resource").getJSONObject("subject").getString("reference");
                     if (!patientIds.contains(patientId)) {
                         patientIds.add(patientId);
-                        patients.add(new Patient(patientId));
+                        Patient newPatient = createPatient.retrievePatient(patientId,null );
+
+                        patients.add(newPatient);
                     }
                 }
 
@@ -85,4 +82,5 @@ public class GetPractitionerModel implements GetPractitionerService {
         Practitioner practitioner = new Practitioner(practitionerID, patients);
         callback.updateUI(practitioner);
     }
+
 }

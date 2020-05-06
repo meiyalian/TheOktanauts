@@ -44,6 +44,7 @@ public class GetPractitionerModel implements GetPractitionerService {
         HashSet<String> patientIds = new HashSet<String>();
 
         while (!finished) {
+            System.out.println(url);
             InputStream is = new URL(url).openStream();
 
             try {
@@ -66,7 +67,12 @@ public class GetPractitionerModel implements GetPractitionerService {
                 // Loops through all of the bundles
                 JSONArray link = json.getJSONArray("link");
                 if (link.length() > 1) {
-                    url = link.getJSONObject(1).getString("url");
+                    if (link.getJSONObject(1).getString("relation").equals("next")) {
+                        url = link.getJSONObject(1).getString("url");
+                    }
+                    else {
+                        finished = true;
+                    }
                 }
                 else {
                     finished = true;

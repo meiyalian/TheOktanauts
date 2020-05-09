@@ -22,9 +22,9 @@ public class Practitioner {
         return patients;
     }
 
-    public Patient viewPatient(String patientId){
-        return patients.searchPatient(patientId);
-    }
+//    public Patient viewPatient(String patientId){
+//        return patients.searchPatient(patientId);
+//    }
 
 }
 

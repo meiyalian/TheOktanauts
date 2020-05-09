@@ -45,6 +45,8 @@ public class UserLoginController implements GetPractitionerCallback {
     public void updateUI(Practitioner practitioner ) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(App.class.getResource("/org/oktanauts/monitorPanel.fxml"));
+
+
         Parent parent = loader.load();
         Scene mainPanel = new Scene(parent);
 
@@ -54,6 +56,6 @@ public class UserLoginController implements GetPractitionerCallback {
         window.setScene(mainPanel);
         window.show();
 
-//        App.setRoot("panel");
+
     }
 }

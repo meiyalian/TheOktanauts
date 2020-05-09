@@ -14,26 +14,21 @@ public class PatientList implements Aggregate {
         this.practitionerId = practitionerId;
     }
 
-    private void loadPatients(){
-
-    }
-
     public void add(Patient patient){
         patients.add(patient);
     }
 
-
-    public Patient searchPatient(String patientId) {
-        Patient match = null;
-
-        for (Patient patient : patients) {
-            if (patient.getId().equals(patientId)) {
-                match = patient;
-            }
-        }
-
-        return match;
-    }
+//    public Patient searchPatient(String patientId) {
+//        Patient match = null;
+//
+//        for (Patient patient : patients) {
+//            if (patient.getId().equals(patientId)) {
+//                match = patient;
+//            }
+//        }
+//
+//        return match;
+//    }
 
     public ArrayList<Patient> retriveAllPatients(){
         return patients;

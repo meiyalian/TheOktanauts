@@ -5,13 +5,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox alignment="CENTER" prefHeight="240.0" prefWidth="329.0" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.UserLoginController">
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="700.0" spacing="20.0" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.UserLoginController">
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
    </padding>
-   <children>
-      <TextField fx:id="idInput" />
-      <Button onAction="#enter" text="Login" />
-   </children>
+   <TextField fx:id="idInput" prefHeight="27.0" prefWidth="300.0"/>
+   <Button onAction="#enter" text="Login"/>
 </VBox>

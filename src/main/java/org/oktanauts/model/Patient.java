@@ -12,6 +12,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import org.json.JSONObject;
 
 public class Patient {
@@ -24,7 +26,7 @@ public class Patient {
     private String city;
     private String state;
     private String country;
-    private boolean isSelected = false;
+    private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
 
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
@@ -39,6 +41,10 @@ public class Patient {
 
     }
 
+    //for testing
+    public Patient(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
@@ -69,6 +75,15 @@ public class Patient {
     public String getCountry() {
         return country;
     }
+
+    public BooleanProperty selectedProperty(){
+        return isMonitored;
+    }
+
+    public boolean isSelected(){
+        return isMonitored.get();
+    }
+
 
 
     }

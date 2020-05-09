@@ -72,7 +72,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void removeMonitoredPatient(Patient p){
         int index = 0;
         while( index < observation.size()){
-            if(observation.get(index).getMeasuredPatient().equals(p)){
+            if(observation.get(index).getMeasuredPatient().getId().equals(p.getId())){
                 break;
             }
             index ++;

@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.util.HashSet;
 
 
-public class GetPractitionerModel implements GetPractitionerService{
+public class GetPractitionerModel {
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -29,7 +29,6 @@ public class GetPractitionerModel implements GetPractitionerService{
 
 
 
-    @Override
     public void retrievePractitioner(String practitionerID, GetPractitionerCallback callback) throws IOException, ParseException {
 
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant=" + practitionerID + "&_format=json";
@@ -39,9 +38,8 @@ public class GetPractitionerModel implements GetPractitionerService{
 
         while (!finished) {
             System.out.println(url);
-            InputStream is = new URL(url).openStream();
 
-            try {
+            try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String jsonText = readAll(rd);
                 //System.out.println(jsonText);
@@ -50,12 +48,12 @@ public class GetPractitionerModel implements GetPractitionerService{
                 JSONArray entries = json.getJSONArray("entry");
 
                 String patientId;
-                GetPatientService createPatient = new GetPatientModel();
+                GetPatientModel createPatient = new GetPatientModel();
                 for (int i = 0; i < entries.length(); i++) {
                     patientId = entries.getJSONObject(i).getJSONObject("resource").getJSONObject("subject").getString("reference");
                     if (!patientIds.contains(patientId)) {
                         patientIds.add(patientId);
-                        Patient newPatient = createPatient.retrievePatient(patientId,null );
+                        Patient newPatient = createPatient.retrievePatient(patientId, null);
 
                         patients.add(newPatient);
                     }
@@ -66,16 +64,12 @@ public class GetPractitionerModel implements GetPractitionerService{
                 if (link.length() > 1) {
                     if (link.getJSONObject(1).getString("relation").equals("next")) {
                         url = link.getJSONObject(1).getString("url");
-                    }
-                    else {
+                    } else {
                         finished = true;
                     }
-                }
-                else {
+                } else {
                     finished = true;
                 }
-            } finally {
-                is.close();
             }
         }
 

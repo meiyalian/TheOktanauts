@@ -3,6 +3,8 @@ package org.oktanauts.model;
 import org.oktanauts.model.Patient;
 import org.oktanauts.model.PatientList;
 
+import java.util.ArrayList;
+
 public class Practitioner {
 
     private String id;
@@ -18,8 +20,12 @@ public class Practitioner {
         return id;
     }
 
-    public PatientList getPatients() {
+    public PatientList getPatientList() {
         return patients;
+    }
+    public ArrayList<Patient> getPatients() {
+
+        return patients.retriveAllPatients();
     }
 
 //    public Patient viewPatient(String patientId){

@@ -1,6 +1,8 @@
 package org.oktanauts.model;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -27,6 +29,9 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
+    private Measurement cholesterolLevel;
+
+
 
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
@@ -38,6 +43,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
+
 
     }
 
@@ -83,6 +89,39 @@ public class Patient {
     public boolean isSelected(){
         return isMonitored.get();
     }
+
+
+    public void updateCholesterol(GetMeasurementCallback callback){
+        this.cholesterolLevel = retrieveSingleMeasurement("cholesterol_level", callback);
+
+    }
+
+    public String getCholesterolLevel(){
+        if (this.cholesterolLevel != null){
+            return cholesterolLevel.getDisplayValue();
+        }
+        return null;
+    }
+
+    public Timestamp getCholesterolMeasuredTime(){
+        if (this.cholesterolLevel != null){
+            return this.cholesterolLevel.getMeasuredDateTime();
+        }
+        return null;
+    }
+
+
+
+    private Measurement retrieveSingleMeasurement( String measurement, GetMeasurementCallback callback){
+        Measurement m = new CholesterolLevel("mg/dL", new Timestamp(new Date().getTime()), 20, "cholesterol level");
+
+        if (callback != null){
+            callback.updateView(m);
+        }
+        return m;
+    };
+
+
 
 
 

@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
@@ -17,10 +19,10 @@ import java.util.ResourceBundle;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView monitorTable;
-    private TableColumn<Measurement, String> nameColumn = new TableColumn<>("Patient Name");
-    private TableColumn<Measurement, String> valColumn = new TableColumn<>("Val");
-    private TableColumn<Measurement, String> timeColumn = new TableColumn<>("Time");
-    private GetMeasurementService getMeasurementService = new GetMeasurementTestModel();
+    private TableColumn<Patient, String> nameColumn = new TableColumn<>("Patient Name");
+    private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
+    private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
+//    private GetMeasurementService getMeasurementService = new GetMeasurementTestModel();
 
 
 //    private ObservableList<Patient> monitoredPatient = FXCollections.observableArrayList();
@@ -28,11 +30,11 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 //    public ObservableList<Patient> getMonitoredPatient() {
 //        return monitoredPatient;
 //    }
-    private ObservableList<Measurement> observation = FXCollections.observableArrayList();
+    private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
 
 
 
-    @Override
+
 //    public void initialize(URL location, ResourceBundle resources) {
 ////        nameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 //
@@ -45,64 +47,67 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 //        monitorTable.setItems(monitoredPatient);
 //        monitorTable.getColumns().add(nameColumn);
 //    }
-
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        nameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
 
-        nameColumn.setCellValueFactory(m -> new ReadOnlyObjectWrapper(m.getValue().getMeasuredPatient().getName()));
+        nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
-        valColumn.setCellValueFactory(m -> new ReadOnlyObjectWrapper(m.getValue().getDisplayValue()));
+        valColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getCholesterolLevel()));
 
-        timeColumn.setCellValueFactory(m -> new ReadOnlyObjectWrapper(m.getValue().getMeasuredDateTime()));
+        timeColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getCholesterolMeasuredTime()));
 
         nameColumn.setMinWidth(170);
         valColumn.setMinWidth(100);
         timeColumn.setMinWidth(170);
 
-        monitorTable.setItems(observation);
+        monitorTable.setItems(monitoredPatients);
         monitorTable.getColumns().addAll(nameColumn, valColumn, timeColumn);
+        monitorTable.setPlaceholder(new Label("No patients being monitored"));
+        monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+
+
 
     }
 
     public void addMonitoredPatient(Patient p){
-        getMeasurementService.retrieveSingleMeasurement(p, "CholesterolLevel", this);
+        p.updateCholesterol(this);
+        monitoredPatients.add(p);
+
 
     }
 
     public void removeMonitoredPatient(Patient p){
         int index = 0;
-        while( index < observation.size()){
-            if(observation.get(index).getMeasuredPatient().equals(p)){
+        while( index < monitoredPatients.size()){
+            if(monitoredPatients.get(index).equals(p)){
                 break;
             }
             index ++;
         }
-        observation.remove(index);
+        monitoredPatients.remove(index);
 
     }
 
 
     @Override
     // this method is for adding a new monitor patient
-    public void updateSingleMeasurement(Measurement measurement) {
-        observation.add(measurement);
-
-        //loop through all measurements and highlight the one that has higher value
-        hightlightWarning();
+    public void updateView(Measurement measurement) {
+//        observation.add(measurement);
+//
+//        //loop through all measurements and highlight the one that has higher value
+//        hightlightWarning();
 
     }
 
-    @Override
-    public void updateMeasurements(ArrayList<Measurement> measurements) {
 
-        // update a list of patient's measurement
-        //this method is used for update every n seconds
-        //remove all the old measurements and add new ones
-    }
-
-    private static void hightlightWarning(){
-        //add highlight
-    }
+//
+//    private  void hightlightWarning(){
+//        //add highlight
+//        monitorTable.
+//
+//    }
 
 }
 

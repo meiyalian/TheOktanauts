@@ -55,10 +55,4 @@ public class PatientList implements Aggregate {
             return null;
         }
     }
-
-
-
-
-
-
 }

@@ -11,11 +11,10 @@ public abstract class Measurement {
     private String measurementName;
     private boolean isWarning = false;
 
-    public Measurement(String unit, Timestamp measuredDateTime, double value, Patient belongsTo, String measurementName) {
+    public Measurement(String unit, Timestamp measuredDateTime, double value,  String measurementName) {
         this.unit = unit;
         this.measuredDateTime = measuredDateTime;
         this.value = value;
-        this.measuredPatient = belongsTo;
         this.measurementName = measurementName;
     }
 

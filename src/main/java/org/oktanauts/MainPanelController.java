@@ -38,8 +38,7 @@ public class MainPanelController implements Initializable {
         this.practitioner = practitioner;
         IDdisplay.setText("PractitionerID: " + practitioner.getId());
 
-        ArrayList<Patient> patients = practitioner.getPatients().retriveAllPatients();
-        ObservableList<Patient> allPatients = FXCollections.observableArrayList(patients);
+        ObservableList<Patient> allPatients = FXCollections.observableArrayList(practitioner.getPatients());
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             if (isSelected) {
                 // update table

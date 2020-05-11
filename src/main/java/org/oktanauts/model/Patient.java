@@ -3,6 +3,7 @@ package org.oktanauts.model;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +36,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
-        this.measurements = new HashMap<String, Measurement>();
+        this.measurements = new HashMap<>();
     }
 
     //for testing
@@ -73,6 +74,10 @@ public class Patient {
         return country;
     }
 
+    public String getAddress(){
+        return this.city + ", " + this.state + ", " + this.country;
+    }
+
     public BooleanProperty selectedProperty(){
         return isMonitored;
     }
@@ -90,13 +95,16 @@ public class Patient {
         return sb.toString();
     }
 
+
+    /* error handling --when measurement doesn't exist should call callback with null
+        parameter and put null in hashmap */
     public void updateMeasurement(String code, MeasurementCallback callback) {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + this.id
                 + "&code=" + code + "&_format=json";
 
         System.out.println(url);
         try (InputStream is = new URL(url).openStream()) {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
 
@@ -111,26 +119,23 @@ public class Patient {
             String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                     .getJSONObject("code").getString("text");
 
-            Measurement result = new Measurement(code, name, value, unit, dateTime);
+            Measurement result = new Measurement(code, name, value, unit, dateTime, this);
+            measurements.put(code, result);
+
             if (callback != null) {
                 callback.updateView(result);
             }
 
-            measurements.put(code, result);
         }
-        catch (IOException e) {
+        catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-    };
+    }
 
     public Measurement getMeasurement(String code) {
         if (!measurements.containsKey(code)) {
             updateMeasurement(code, null);
         }
-
         return measurements.get(code);
     }
 }

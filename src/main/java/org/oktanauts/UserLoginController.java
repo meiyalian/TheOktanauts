@@ -6,8 +6,6 @@ import java.text.ParseException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.oktanauts.model.PractitionerModel;
@@ -27,6 +25,7 @@ public class UserLoginController implements PractitionerCallback {
         if (isValid(idInput)){
             getPractitionerService.getPractitioner(idInput.getText(), this);
         }
+
     }
 
     public boolean isValid(TextField textField){
@@ -44,16 +43,21 @@ public class UserLoginController implements PractitionerCallback {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(App.class.getResource("/org/oktanauts/monitorPanel.fxml"));
 
+//
+//        Parent parent = loader.load();
+//        Scene mainPanel = new Scene(parent);
+//
+//        MainPanelController mainPage = loader.getController();
+//        mainPage.initData(practitioner);
+//        Stage window = App.getStage();
+//        window.setScene(mainPanel);
+//        window.show();
 
-        Parent parent = loader.load();
-        Scene mainPanel = new Scene(parent);
-
+        App.setRoot(loader);
         MainPanelController mainPage = loader.getController();
         mainPage.initData(practitioner);
         Stage window = App.getStage();
-        window.setScene(mainPanel);
         window.show();
-
 
     }
 }

@@ -4,23 +4,24 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.oktanauts.model.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -33,14 +34,38 @@ public class MainPanelController implements Initializable {
 //    private ObservableList<Patient> monitoredPatient = FXCollections.observableArrayList();
 
 
+    @FXML Label IDdisplay;
+    @FXML ListView patientListView;
+    @FXML BorderPane tablePane;
+    @FXML Spinner<Integer> refreshSpinner;
+    @FXML Button backToLogin;
+    @FXML Button viewDetail;
+
     @FXML
-    Label IDdisplay;
+    private void setBackToLogin(ActionEvent e) throws IOException {
+        refreshTimer = null;
+
+        App.setRoot("userLogin");
+    }
+
     @FXML
-    ListView patientListView;
-    @FXML
-    BorderPane tablePane;
-    @FXML
-    Spinner<Integer> refreshSpinner;
+    private void viewPatientDetails(ActionEvent e) throws IOException {
+        Patient p = tableViewController.selectedPatient();
+        if (p!= null){
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getResource("/org/oktanauts/patientDetails.fxml"));
+            Parent root = loader.load();
+            DetailViewController detailViewController = loader.getController();
+
+            System.out.println(p.getCity());
+            detailViewController.initData(p);
+            Scene detailPage = new Scene(root);
+            Stage newWindow = new Stage();
+            newWindow.setScene(detailPage);
+            newWindow.show();
+        }
+    }
 
 
     // initializing process after the practitioner is created
@@ -96,7 +121,7 @@ public class MainPanelController implements Initializable {
             refreshTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    tableViewController.update();
+                    tableViewController.updateAll();
                     System.out.print("Refreshing - " + refreshSpinner.getValue());
                 }
             }, 0, refreshSpinner.getValue() * 1000);
@@ -123,7 +148,7 @@ public class MainPanelController implements Initializable {
         refreshTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                tableViewController.update();
+                tableViewController.updateAll();
                 System.out.print("Refreshing - " + refreshSpinner.getValue());
             }
         }, 0, refreshSpinner.getValue() * 1000);

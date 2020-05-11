@@ -37,7 +37,6 @@ public class PractitionerModel {
             try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String jsonText = readAll(rd);
-                //System.out.println(jsonText);
                 JSONObject json = new JSONObject(jsonText);
 
                 JSONArray entries = json.getJSONArray("entry");

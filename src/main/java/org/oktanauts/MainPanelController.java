@@ -1,5 +1,6 @@
 package org.oktanauts;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -9,6 +10,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.BorderPane;
@@ -26,6 +29,7 @@ import java.util.TimerTask;
 public class MainPanelController implements Initializable {
     private Practitioner practitioner;
     private TableViewController tableViewController;
+    private Timer refreshTimer;
 //    private ObservableList<Patient> monitoredPatient = FXCollections.observableArrayList();
 
 
@@ -86,14 +90,14 @@ public class MainPanelController implements Initializable {
     }
 
     public void onRefreshChange() {
-        System.out.println("change detected");
-        System.out.println(refreshSpinner.getValue());
-        if (refreshSpinner.getValue() > 0){
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
+        if (refreshSpinner.getValue() != null) {
+            refreshTimer.cancel();
+            refreshTimer = new Timer();
+            refreshTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.print("Howdy there partner!");
+                    tableViewController.update();
+                    System.out.print("Refreshing - " + refreshSpinner.getValue());
                 }
             }, 0, refreshSpinner.getValue() * 1000);
         }
@@ -102,7 +106,6 @@ public class MainPanelController implements Initializable {
     // initialize views in the panel
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         //load table view
         FXMLLoader tableLoader = new FXMLLoader();
         tableLoader.setLocation(App.class.getResource("/org/oktanauts/tableView.fxml"));
@@ -116,6 +119,14 @@ public class MainPanelController implements Initializable {
         tableViewController = tableLoader.getController();
         tablePane.setCenter(view);
 
+        refreshTimer = new Timer();
+        refreshTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                tableViewController.update();
+                System.out.print("Refreshing - " + refreshSpinner.getValue());
+            }
+        }, 0, refreshSpinner.getValue() * 1000);
 
         // add listener to monitored patient list, whenever a new patient is added, notify table view controller
 //        monitoredPatient.addListener(new ListChangeListener<Patient>() {

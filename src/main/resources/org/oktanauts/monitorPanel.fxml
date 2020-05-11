@@ -18,7 +18,11 @@
             <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="507.0" prefWidth="491.0">
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="163.0" prefWidth="482.0">
                     <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0" prefWidth="199.0" text="Practitioner ID: " />
-               <Spinner fx:id="refreshSpinner" editable="true" layoutX="399.0" layoutY="50.0" onInputMethodTextChanged="#onRefreshChange" onKeyPressed="#onRefreshChange" onKeyReleased="#onRefreshChange" prefHeight="26.0" prefWidth="67.0" />
+                    <Spinner fx:id="refreshSpinner" layoutX="398.0" layoutY="50.0" onMouseClicked="#onRefreshChange" prefHeight="26.0" prefWidth="67.0">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory max="45" min="5" amountToStepBy="5" initialValue="15"/>
+                        </valueFactory>
+                    </Spinner>
                <Label layoutX="398.0" layoutY="27.0" text="Refresh Rate" />
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="393.0" prefWidth="494.0">

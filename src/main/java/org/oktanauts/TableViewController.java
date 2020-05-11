@@ -5,16 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import org.oktanauts.model.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class TableViewController implements Initializable, MeasurementCallback {
+public class TableViewController implements Initializable {
     @FXML  private TableView monitorTable;
     private TableColumn<Patient, String> nameColumn = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
@@ -59,14 +56,14 @@ public class TableViewController implements Initializable, MeasurementCallback {
         monitoredPatients.remove(index);
     }
 
-
-    @Override
     // this method is for adding a new monitor patient
-    public void updateView(Measurement measurement) {
-//        observation.add(measurement);
-//
-//        //loop through all measurements and highlight the one that has higher value
-//        hightlightWarning();
+    public void update() {
+        for (Patient patient : monitoredPatients) {
+            patient.updateMeasurement("2093-3", null);
+        }
+
+        //loop through all measurements and highlight the one that has higher value
+        //hightlightWarning();
 
     }
 

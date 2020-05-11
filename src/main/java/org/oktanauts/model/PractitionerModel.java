@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import org.json.JSONObject;
 
@@ -16,8 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashSet;
 
-
-public class GetPractitionerModel {
+public class PractitionerModel {
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -27,10 +25,7 @@ public class GetPractitionerModel {
         return sb.toString();
     }
 
-
-
-    public void retrievePractitioner(String practitionerID, GetPractitionerCallback callback) throws IOException, ParseException {
-
+    public void retrievePractitioner(String practitionerID, PractitionerCallback callback) throws IOException, ParseException {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant=" + practitionerID + "&_format=json";
         boolean finished = false;
         PatientList patients = new PatientList(practitionerID);
@@ -48,12 +43,12 @@ public class GetPractitionerModel {
                 JSONArray entries = json.getJSONArray("entry");
 
                 String patientId;
-                GetPatientModel createPatient = new GetPatientModel();
+                PatientModel createPatient = new PatientModel();
                 for (int i = 0; i < entries.length(); i++) {
                     patientId = entries.getJSONObject(i).getJSONObject("resource").getJSONObject("subject").getString("reference");
                     if (!patientIds.contains(patientId)) {
                         patientIds.add(patientId);
-                        Patient newPatient = createPatient.retrievePatient(patientId, null);
+                        Patient newPatient = createPatient.getPatient(patientId, null);
 
                         patients.add(newPatient);
                     }

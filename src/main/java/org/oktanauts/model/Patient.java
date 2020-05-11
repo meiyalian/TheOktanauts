@@ -1,18 +1,12 @@
 package org.oktanauts.model;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,10 +23,6 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private Measurement cholesterolLevel;
-
-
-
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
         this.id = id;
@@ -43,8 +33,6 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
-
-
     }
 
     //for testing
@@ -90,39 +78,50 @@ public class Patient {
         return isMonitored.get();
     }
 
-
-    public void updateCholesterol(GetMeasurementCallback callback){
-        this.cholesterolLevel = retrieveSingleMeasurement("cholesterol_level", callback);
-
+    private static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
     }
 
-    public String getCholesterolLevel(){
-        if (this.cholesterolLevel != null){
-            return cholesterolLevel.getDisplayValue();
+    public Measurement getMeasurement (String code, MeasurementCallback callback) {
+        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + this.id
+                + "&code=" + code + "&_format=json";
+
+        System.out.println(url);
+        try (InputStream is = new URL(url).openStream()) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONObject json = new JSONObject(jsonText);
+
+            JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                    .getJSONObject("valueQuantity");
+
+            Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX").parse(json.getJSONArray("entry")
+                    .getJSONObject(0).getJSONObject("resource")
+                    .getString("issued")).getTime());
+            Float value = valueQuantity.getFloat("value");
+            String unit = valueQuantity.getString("unit");
+            String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                    .getJSONObject("code").getString("text");
+
+            Measurement result = new Measurement(code, name, value, unit, this, dateTime);
+            if (callback != null) {
+                callback.updateView(result);
+            }
+
+            return result;
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return null;
-    }
-
-    public Timestamp getCholesterolMeasuredTime(){
-        if (this.cholesterolLevel != null){
-            return this.cholesterolLevel.getMeasuredDateTime();
-        }
-        return null;
-    }
-
-
-
-    private Measurement retrieveSingleMeasurement( String measurement, GetMeasurementCallback callback){
-        Measurement m = new CholesterolLevel("mg/dL", new Timestamp(new Date().getTime()), 20, "cholesterol level");
-
-        if (callback != null){
-            callback.updateView(m);
-        }
-        return m;
     };
-
-
-
-
-
-    }
+}

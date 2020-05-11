@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainPanelController implements Initializable {
     private Practitioner practitioner;
@@ -31,6 +35,8 @@ public class MainPanelController implements Initializable {
     ListView patientListView;
     @FXML
     BorderPane tablePane;
+    @FXML
+    Spinner<Integer> refreshSpinner;
 
 
     // initializing process after the practitioner is created
@@ -77,6 +83,20 @@ public class MainPanelController implements Initializable {
             }
         }));
 
+    }
+
+    public void onRefreshChange() {
+        System.out.println("change detected");
+        System.out.println(refreshSpinner.getValue());
+        if (refreshSpinner.getValue() > 0){
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.print("Howdy there partner!");
+                }
+            }, 0, refreshSpinner.getValue() * 1000);
+        }
     }
 
     // initialize views in the panel

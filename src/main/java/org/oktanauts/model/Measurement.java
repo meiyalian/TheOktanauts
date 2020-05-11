@@ -2,47 +2,27 @@ package org.oktanauts.model;
 
 import java.sql.Timestamp;
 
-public abstract class Measurement {
+public class Measurement {
 
+    private String code;
+    private String name;
+    private Float value;
     private String unit;
-    private Timestamp measuredDateTime;
-    private double value;
-    private Patient measuredPatient;
-    private String measurementName;
-    private boolean isWarning = false;
+    private Patient patient;
+    private Timestamp timestamp;
 
-    public Measurement(String unit, Timestamp measuredDateTime, double value,  String measurementName) {
-        this.unit = unit;
-        this.measuredDateTime = measuredDateTime;
+    public Measurement(String code, String name, Float value, String unit, Patient patient, Timestamp timestamp) {
+        this.code = code;
+        this.name = name;
         this.value = value;
-        this.measurementName = measurementName;
+        this.unit = unit;
+        this.patient = patient;
+        this.timestamp = timestamp;
     }
 
-    public String getMeasurementName() {
-        return measurementName;
-    }
+    public Float getValue() { return this.value; }
 
-    public boolean isWarning() {
-        return isWarning;
-    }
+    public Timestamp getTimestamp() { return this.timestamp; }
 
-    public void setWarning(boolean warning) {
-        isWarning = warning;
-    }
-
-    public Timestamp getMeasuredDateTime() {
-        return measuredDateTime;
-    }
-
-    public String getDisplayValue() {
-        return value+ " " + unit;
-    }
-
-    public Patient getMeasuredPatient() {
-        return measuredPatient;
-    }
-
-
-
-
+    public String toString() { return this.value + " " + this.unit; }
 }

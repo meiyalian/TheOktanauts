@@ -10,28 +10,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.oktanauts.model.GetPractitionerModel;
+import org.oktanauts.model.PractitionerModel;
 import org.oktanauts.model.Practitioner;
-import org.oktanauts.model.GetPractitionerCallback;
+import org.oktanauts.model.PractitionerCallback;
 
 
-public class UserLoginController implements GetPractitionerCallback {
+public class UserLoginController implements PractitionerCallback {
 
 
-    GetPractitionerModel getPractitionerService = new GetPractitionerModel();
+    PractitionerModel getPractitionerService = new PractitionerModel();
 
     @FXML public TextField idInput;
 
     @FXML
     private void enter(ActionEvent e) throws IOException, ParseException {
-        if (isValidate(idInput)){
+        if (isValid(idInput)){
             getPractitionerService.retrievePractitioner(idInput.getText(), this);
         }
-
-
     }
 
-    public boolean isValidate(TextField textField){
+    public boolean isValid(TextField textField){
         try{
             int ID = Integer.parseInt(textField.getText());
             return true;

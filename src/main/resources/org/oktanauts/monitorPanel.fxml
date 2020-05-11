@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.text.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.oktanauts.MainPanelController">
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.MainPanelController">
     <SplitPane dividerPositions="0.29797979797979796" layoutY="-5.0" prefHeight="509.0" prefWidth="691.0">
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-            <Label alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="All Patients"
-                   textAlignment="CENTER">
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="All Patients" textAlignment="CENTER">
                 <font>
-                    <Font name="Arial Bold" size="13.0"/>
+                    <Font name="Arial Bold" size="13.0" />
                 </font>
             </Label>
-            <ListView fx:id="patientListView" prefHeight="507.0" prefWidth="202.0"/>
+            <ListView fx:id="patientListView" prefHeight="507.0" prefWidth="202.0" />
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="508.0">
-            <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL"
-                       prefHeight="507.0" prefWidth="491.0">
+            <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="507.0" prefWidth="491.0">
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="163.0" prefWidth="482.0">
-                    <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0"
-                           prefWidth="199.0" text="PractitionerID: "/>
+                    <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0" prefWidth="199.0" text="Practitioner ID: " />
+               <Spinner fx:id="refreshSpinner" editable="true" layoutX="399.0" layoutY="50.0" onInputMethodTextChanged="#onRefreshChange" onKeyPressed="#onRefreshChange" onKeyReleased="#onRefreshChange" prefHeight="26.0" prefWidth="67.0" />
+               <Label layoutX="398.0" layoutY="27.0" text="Refresh Rate" />
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="393.0" prefWidth="494.0">
-                    <BorderPane fx:id="tablePane" prefHeight="398.0" prefWidth="489.0"/>
+                    <BorderPane fx:id="tablePane" prefHeight="398.0" prefWidth="489.0" />
                 </AnchorPane>
             </SplitPane>
         </AnchorPane>

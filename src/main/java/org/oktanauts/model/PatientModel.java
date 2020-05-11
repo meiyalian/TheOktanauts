@@ -16,10 +16,17 @@ import java.text.SimpleDateFormat;
 import java.io.Reader;
 import java.util.Date;
 
+public class PatientModel  {
+    private static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
+    }
 
-public class GetPatientModel  {
-
-    public Patient retrievePatient(String patientId, GetPatientCallback callback) throws IOException, ParseException {
+    public Patient getPatient(String patientId, PatientCallback callback) throws IOException, ParseException {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/" + patientId + "?_format=json";
 
         try (InputStream is = new URL(url).openStream()) {
@@ -44,18 +51,6 @@ public class GetPatientModel  {
             }
 
             return patient;
-
         }
-
-
-    }
-
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
     }
 }

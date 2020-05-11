@@ -8,15 +8,13 @@ public class Measurement {
     private String name;
     private Float value;
     private String unit;
-    private Patient patient;
     private Timestamp timestamp;
 
-    public Measurement(String code, String name, Float value, String unit, Patient patient, Timestamp timestamp) {
+    public Measurement(String code, String name, Float value, String unit, Timestamp timestamp) {
         this.code = code;
         this.name = name;
         this.value = value;
         this.unit = unit;
-        this.patient = patient;
         this.timestamp = timestamp;
     }
 

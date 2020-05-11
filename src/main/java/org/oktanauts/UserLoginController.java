@@ -25,7 +25,7 @@ public class UserLoginController implements PractitionerCallback {
     @FXML
     private void enter(ActionEvent e) throws IOException, ParseException {
         if (isValid(idInput)){
-            getPractitionerService.retrievePractitioner(idInput.getText(), this);
+            getPractitionerService.getPractitioner(idInput.getText(), this);
         }
     }
 

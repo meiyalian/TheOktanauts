@@ -28,10 +28,10 @@ public class TableViewController implements Initializable, MeasurementCallback {
         nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
         valColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue()
-                .getMeasurement("2093-3", null).toString()));
+                .getMeasurement("2093-3").toString()));
 
         timeColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue()
-                .getMeasurement("2093-3", null).getTimestamp()));
+                .getMeasurement("2093-3").getTimestamp()));
 
         nameColumn.setMinWidth(170);
         valColumn.setMinWidth(100);
@@ -44,10 +44,8 @@ public class TableViewController implements Initializable, MeasurementCallback {
     }
 
     public void addMonitoredPatient(Patient p){
-        //p.updateCholesterol(this);
+        p.updateMeasurement("2093-3", null);
         monitoredPatients.add(p);
-
-
     }
 
     public void removeMonitoredPatient(Patient p){
@@ -59,7 +57,6 @@ public class TableViewController implements Initializable, MeasurementCallback {
             index ++;
         }
         monitoredPatients.remove(index);
-
     }
 
 

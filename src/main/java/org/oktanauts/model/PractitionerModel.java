@@ -25,7 +25,7 @@ public class PractitionerModel {
         return sb.toString();
     }
 
-    public void retrievePractitioner(String practitionerID, PractitionerCallback callback) throws IOException, ParseException {
+    public void getPractitioner(String practitionerID, PractitionerCallback callback) throws IOException, ParseException {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant=" + practitionerID + "&_format=json";
         boolean finished = false;
         PatientList patients = new PatientList(practitionerID);

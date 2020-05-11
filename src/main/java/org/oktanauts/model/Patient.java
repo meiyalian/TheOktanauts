@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,6 +24,7 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
+    private HashMap<String, Measurement> measurements;
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
         this.id = id;
@@ -33,6 +35,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
+        this.measurements = new HashMap<String, Measurement>();
     }
 
     //for testing
@@ -87,7 +90,7 @@ public class Patient {
         return sb.toString();
     }
 
-    public Measurement getMeasurement (String code, MeasurementCallback callback) {
+    public void updateMeasurement(String code, MeasurementCallback callback) {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + this.id
                 + "&code=" + code + "&_format=json";
 
@@ -100,20 +103,20 @@ public class Patient {
             JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                     .getJSONObject("valueQuantity");
 
-            Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX").parse(json.getJSONArray("entry")
-                    .getJSONObject(0).getJSONObject("resource")
+            Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
+                    .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                     .getString("issued")).getTime());
             Float value = valueQuantity.getFloat("value");
             String unit = valueQuantity.getString("unit");
             String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                     .getJSONObject("code").getString("text");
 
-            Measurement result = new Measurement(code, name, value, unit, this, dateTime);
+            Measurement result = new Measurement(code, name, value, unit, dateTime);
             if (callback != null) {
                 callback.updateView(result);
             }
 
-            return result;
+            measurements.put(code, result);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +124,13 @@ public class Patient {
         catch (ParseException e) {
             e.printStackTrace();
         }
-
-        return null;
     };
+
+    public Measurement getMeasurement(String code) {
+        if (!measurements.containsKey(code)) {
+            updateMeasurement(code, null);
+        }
+
+        return measurements.get(code);
+    }
 }

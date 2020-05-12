@@ -43,6 +43,7 @@ public class MainPanelController implements Initializable {
 
     @FXML
     private void setBackToLogin(ActionEvent e) throws IOException {
+        refreshTimer.cancel();
         refreshTimer = null;
 
         App.setRoot("userLogin");

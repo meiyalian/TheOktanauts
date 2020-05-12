@@ -124,7 +124,7 @@ public class Patient {
                 Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
                         .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                                 .getString("issued")).getTime());
-                Float value = valueQuantity.getFloat("value");
+                double value = valueQuantity.getDouble(  "value");
                 String unit = valueQuantity.getString("unit");
                 String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
                         .getJSONObject("code").getString("text");

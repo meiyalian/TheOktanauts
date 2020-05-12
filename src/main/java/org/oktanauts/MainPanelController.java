@@ -31,7 +31,7 @@ public class MainPanelController implements Initializable {
     private Practitioner practitioner;
     private TableViewController tableViewController;
     private Timer refreshTimer;
-//    private ObservableList<Patient> monitoredPatient = FXCollections.observableArrayList();
+
 
 
     @FXML Label IDdisplay;
@@ -77,15 +77,10 @@ public class MainPanelController implements Initializable {
         ObservableList<Patient> allPatients = FXCollections.observableArrayList(practitioner.getPatients());
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             if (isSelected) {
-                // update table
-//                tableViewController.getMonitoredPatient().add(patient);
-//                monitoredPatient.add(patient);
                 tableViewController.addMonitoredPatient(patient);
 
             }
             if (wasSelected && !isSelected) {
-//                tableViewController.getMonitoredPatient().remove(patient);
-//                monitoredPatient.remove(patient);
                 tableViewController.removeMonitoredPatient(patient);
             }
 
@@ -141,7 +136,7 @@ public class MainPanelController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        tableLoader.setLocation(App.class.getResource("/org/oktanauts/tableView.fxml"));
+
         tableViewController = tableLoader.getController();
         tablePane.setCenter(view);
 

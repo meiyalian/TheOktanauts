@@ -22,7 +22,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         update();
-        nameColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+        nameColumn.setCellFactory(p -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -37,7 +37,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             }
         });
 
-        valColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+        valColumn.setCellFactory(p -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -47,13 +47,12 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                     if (patient.getHasWarning()) {
                         setTextFill(Color.RED);
                     }
-
-                    setText(patient.getMeasurement("2093-3").toString());
+                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").toString(): null);
                 }
             }
         });
 
-        timeColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+        timeColumn.setCellFactory(p -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -63,7 +62,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                     if (patient.getHasWarning()) {
                         setTextFill(Color.RED);
                     }
-                    setText(patient.getMeasurement("2093-3").getTimestamp().toString());
+                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").getTimestamp().toString(): null);
                 }
             }
         });
@@ -108,15 +107,23 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     public void update() {
         double sum = 0.0;
+        int patientWithMeasurement = 0;
         for (Patient patient : monitoredPatients) {
             patient.updateMeasurement("2093-3", null);
-            sum += patient.getMeasurement("2093-3").getValue();
+            Measurement m = patient.getMeasurement("2093-3");
+            if (m != null){
+                sum += patient.getMeasurement("2093-3").getValue();
+                patientWithMeasurement += 1;
+            }
         }
-        
-        double average = sum / monitoredPatients.size();
+        double average = 0;
+        if (patientWithMeasurement >0){
+            average = sum / patientWithMeasurement;
+        }
 
         for (Patient patient : monitoredPatients) {
-            patient.setHasWarning(patient.getMeasurement("2093-3").getValue() > average);
+            Measurement m = patient.getMeasurement("2093-3");
+            patient.setHasWarning(m != null && m.getValue() > average);
         }
     }
 }

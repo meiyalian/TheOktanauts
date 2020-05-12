@@ -112,19 +112,24 @@ public class Patient {
             String jsonText = readAll(rd);
             JSONObject json = new JSONObject(jsonText);
 
-            JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                    .getJSONObject("valueQuantity");
+            if (json.has("entry")){
+                JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                        .getJSONObject("valueQuantity");
 
-            Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
-                    .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                    .getString("issued")).getTime());
-            Float value = valueQuantity.getFloat("value");
-            String unit = valueQuantity.getString("unit");
-            String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                    .getJSONObject("code").getString("text");
+                Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
+                        .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                                .getString("issued")).getTime());
+                Float value = valueQuantity.getFloat("value");
+                String unit = valueQuantity.getString("unit");
+                String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                        .getJSONObject("code").getString("text");
 
-            Measurement result = new Measurement(code, name, value, unit, dateTime, this);
-            measurements.put(code, result);
+                Measurement result = new Measurement(code, name, value, unit, dateTime, this);
+                measurements.put(code, result);
+            }
+            else{
+                measurements.put(code, null);
+            }
 
             if (callback != null) {
                 callback.update();

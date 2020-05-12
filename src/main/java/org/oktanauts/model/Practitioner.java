@@ -25,7 +25,7 @@ public class Practitioner {
     }
     public ArrayList<Patient> getPatients() {
 
-        return patients.retriveAllPatients();
+        return patients.getAllPatients();
     }
 
 //    public Patient viewPatient(String patientId){

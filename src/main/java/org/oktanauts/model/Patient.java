@@ -25,6 +25,7 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
+    private boolean hasWarning = false;
     private HashMap<String, Measurement> measurements;
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
@@ -78,6 +79,10 @@ public class Patient {
         return this.city + ", " + this.state + ", " + this.country;
     }
 
+    public Boolean getHasWarning() { return hasWarning; }
+
+    public void setHasWarning(boolean hasWarning) { this.hasWarning = hasWarning; }
+
     public BooleanProperty selectedProperty(){
         return isMonitored;
     }
@@ -123,7 +128,7 @@ public class Patient {
             measurements.put(code, result);
 
             if (callback != null) {
-                callback.updateView(result);
+                callback.update();
             }
 
         }

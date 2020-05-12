@@ -16,7 +16,5 @@ public class DetailViewController{
         birthday.setText("Birthday: " + p.getBirthday());
         gender.setText("Gender: " + p.getGender());
         address.setText("Address: " + p.getAddress());
-
     }
-
 }

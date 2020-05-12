@@ -121,10 +121,10 @@ public class MainPanelController implements Initializable {
             refreshTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    tableViewController.updateAll();
+                    tableViewController.update();
                     System.out.print("Refreshing - " + refreshSpinner.getValue());
                 }
-            }, 0, refreshSpinner.getValue() * 1000);
+            }, refreshSpinner.getValue() * 1000, refreshSpinner.getValue() * 1000);
         }
     }
 
@@ -148,7 +148,7 @@ public class MainPanelController implements Initializable {
         refreshTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                tableViewController.updateAll();
+                tableViewController.update();
                 System.out.print("Refreshing - " + refreshSpinner.getValue());
             }
         }, 0, refreshSpinner.getValue() * 1000);

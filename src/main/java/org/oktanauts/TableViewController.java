@@ -16,8 +16,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.oktanauts.model.*;
 
 import java.io.IOException;
@@ -31,73 +29,59 @@ public class TableViewController implements Initializable, MeasurementCallback {
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
     private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
     private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
-    private ArrayList<Measurement> monitoredCholesterol = new ArrayList<>();
-    private float averageCholesterol = 0;
-
+    private MeasurementCallback measurementCallback;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        update();
+        nameColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
-//        nameColumn.setCellFactory(monitorTable -> {
-//
-//            TableCell<Patient, String> cell = new TableCell<Patient, String>();
-//                @Override
-//                protected void updateItem(String item, boolean empty){
-//                    super.updateItem(item, empty);
-//                    if (!empty){
-//                        this.setText(item);
-//                        System.out.println(this.getTableRow().getIndex());
-//
-//
-//                    }
-//                }
-//            }
-//            cell.setOnMouseClicked(mouseEvent -> {
-//                if (mouseEvent.getClickCount() == 2 && !cell.isEmpty()){
-//                    cell.getTableRow().setStyle("-fx-background-color: tomato;");
-//
-//                }
-//            });
-//            return cell;
-//        });
-        nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
+                if (!empty) {
+                    Patient patient = getTableRow().getItem();
+                    if (patient.getHasWarning()) {
+                        setTextFill(Color.RED);
+                    }
+                    setText(patient.getName());
+                }
+            }
+        });
 
+        valColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
+                if (!empty) {
+                    Patient patient = getTableRow().getItem();
+                    if (patient.getHasWarning()) {
+                        setTextFill(Color.RED);
+                    }
+                    setText(patient.getMeasurement("2093-3").toString());
+                }
+            }
+        });
 
-        valColumn.setCellValueFactory(p ->
-                new ReadOnlyObjectWrapper(p.getValue()
-                .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").toString(): ""));
+        timeColumn.setCellFactory(p -> new TableCell<Patient, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
-
-
-        timeColumn.setCellValueFactory(p ->
-                new ReadOnlyObjectWrapper(p.getValue()
-                .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").getTimestamp():""));
+                if (!empty) {
+                    Patient patient = getTableRow().getItem();
+                    if (patient.getHasWarning()) {
+                        setTextFill(Color.RED);
+                    }
+                    setText(patient.getMeasurement("2093-3").getTimestamp().toString());
+                }
+            }
+        });
 
         nameColumn.setMinWidth(170);
         valColumn.setMinWidth(100);
         timeColumn.setMinWidth(170);
-
-//        monitorTable.setRowFactory(tv -> {
-//            TableRow<Patient> row = new TableRow<>();
-//
-//            if(row.getItem() == null){
-//                System.out.println("is   null");
-//            }else{
-//                System.out.println("is   not null");
-//            }
-//
-////            Measurement value = row.getItem().getMeasurement("2093-3");
-////            if (value != null){
-////                BooleanBinding highlight = new SimpleFloatProperty(value.getValue()).lessThan(averageCholesterol);
-////                row.styleProperty().bind(Bindings.when(highlight)
-////                        .then("-fx-background-color: red ;")
-////                        .otherwise(""));
-////            }
-//            return row;
-//        });
-
-
 
         monitorTable.setItems(monitoredPatients);
         monitorTable.getColumns().addAll(nameColumn, valColumn, timeColumn);
@@ -113,8 +97,7 @@ public class TableViewController implements Initializable, MeasurementCallback {
     public void addMonitoredPatient(Patient p){
         p.updateMeasurement("2093-3", this);
         monitoredPatients.add(p);
-        System.out.println("add" + monitoredPatients.size());
-
+        update();
     }
 
     public void removeMonitoredPatient(Patient p){
@@ -128,63 +111,24 @@ public class TableViewController implements Initializable, MeasurementCallback {
             }
             index ++;
         }
-        if (isFound){
+        if (isFound) {
             monitoredPatients.remove(index);
-        }
-
-        removeOldMeasurement(p);
-        updateAverageCholesterol();
-        System.out.println("remove" + monitoredPatients.size());
-
-    }
-
-    private void updateAverageCholesterol(){
-
-        if (monitoredCholesterol.size() ==0){
-            averageCholesterol = 0;
-        }
-        else{
-            float totalCholesterol = 0;
-            for (Measurement each:monitoredCholesterol) {
-                totalCholesterol += each.getValue();
-            }
-            averageCholesterol = totalCholesterol / monitoredCholesterol.size();
+            update();
         }
     }
 
-    private void removeOldMeasurement(Patient p){
-        int index = 0;
-        boolean isFound = false;
-        while( index < monitoredCholesterol.size()){
-            if(monitoredCholesterol.get(index).getPatient().equals(p)){
-                isFound = true;
-                break;
-            }
-            index ++;
-        }
-        if (isFound){
-            monitoredCholesterol.remove(index);
-        }
-
-    }
-
-
-    @Override
-    public void updateView(Measurement measurement) {
-        removeOldMeasurement(measurement.getPatient());
-        monitoredCholesterol.add(measurement);
-        updateAverageCholesterol();
-
-    }
-
-
-    public void updateAll() {
+    public void update() {
+        double sum = 0.0;
         for (Patient patient : monitoredPatients) {
-            patient.updateMeasurement("2093-3", this);
+            patient.updateMeasurement("2093-3", null);
+            sum += patient.getMeasurement("2093-3").getValue();
+        }
+        
+        double average = sum / monitoredPatients.size();
+
+        for (Patient patient : monitoredPatients) {
+            patient.setHasWarning(patient.getMeasurement("2093-3").getValue() > average);
         }
     }
-
-
-
-    }
+}
 

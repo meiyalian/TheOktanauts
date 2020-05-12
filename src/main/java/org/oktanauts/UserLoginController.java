@@ -29,10 +29,10 @@ public class UserLoginController implements PractitionerCallback {
     }
 
     public boolean isValid(TextField textField){
-        try{
+        try {
             int ID = Integer.parseInt(textField.getText());
             return true;
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e){
             return false;
         }
     }

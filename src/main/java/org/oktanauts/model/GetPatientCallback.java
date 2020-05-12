@@ -1,5 +1,5 @@
 package org.oktanauts.model;
 
-public interface PatientCallback {
+public interface GetPatientCallback {
     void getPatientSuccess(Patient patient);
 }

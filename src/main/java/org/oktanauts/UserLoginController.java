@@ -8,15 +8,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.oktanauts.model.PractitionerModel;
+import org.oktanauts.model.GetPractitionerService;
 import org.oktanauts.model.Practitioner;
-import org.oktanauts.model.PractitionerCallback;
+import org.oktanauts.model.GetPractitionerCallback;
 
 
-public class UserLoginController implements PractitionerCallback {
+public class UserLoginController implements GetPractitionerCallback {
 
 
-    PractitionerModel getPractitionerService = new PractitionerModel();
+    GetPractitionerService getPractitionerService = new GetPractitionerService();
 
     @FXML public TextField idInput;
 
@@ -37,27 +37,23 @@ public class UserLoginController implements PractitionerCallback {
         }
     }
 
-
     @Override
     public void updateUI(Practitioner practitioner ) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(App.class.getResource("/org/oktanauts/monitorPanel.fxml"));
-
-//
-//        Parent parent = loader.load();
-//        Scene mainPanel = new Scene(parent);
-//
-//        MainPanelController mainPage = loader.getController();
-//        mainPage.initData(practitioner);
-//        Stage window = App.getStage();
-//        window.setScene(mainPanel);
-//        window.show();
-
         App.setRoot(loader);
         MainPanelController mainPage = loader.getController();
         mainPage.initData(practitioner);
         Stage window = App.getStage();
         window.show();
+
+    }
+
+    // currently there is no login function
+    //if the practitioner does not exist the user is still able to enter the app
+    //yet to be implemented
+    @Override
+    public void getPractitionerFail() {
 
     }
 }

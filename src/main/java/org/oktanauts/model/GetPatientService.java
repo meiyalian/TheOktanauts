@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.io.Reader;
 import java.util.Date;
 
-public class PatientModel  {
+public class GetPatientService {
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -26,7 +25,7 @@ public class PatientModel  {
         return sb.toString();
     }
 
-    public Patient getPatient(String patientId, PatientCallback callback) throws IOException, ParseException {
+    public Patient getPatient(String patientId, GetPatientCallback callback) throws IOException, ParseException {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/" + patientId + "?_format=json";
 
         try (InputStream is = new URL(url).openStream()) {

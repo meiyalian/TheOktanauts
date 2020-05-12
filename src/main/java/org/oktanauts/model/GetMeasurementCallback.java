@@ -2,6 +2,6 @@ package org.oktanauts.model;
 
 import java.util.ArrayList;
 
-public interface MeasurementCallback {
+public interface GetMeasurementCallback {
     void update();
 }

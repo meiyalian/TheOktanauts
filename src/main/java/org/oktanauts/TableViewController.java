@@ -1,35 +1,23 @@
 package org.oktanauts;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import org.oktanauts.model.*;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class TableViewController implements Initializable, MeasurementCallback {
+public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView<Patient> monitorTable;
     private TableColumn<Patient, String> nameColumn = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
     private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
     private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
-    private MeasurementCallback measurementCallback;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,6 +47,7 @@ public class TableViewController implements Initializable, MeasurementCallback {
                     if (patient.getHasWarning()) {
                         setTextFill(Color.RED);
                     }
+
                     setText(patient.getMeasurement("2093-3").toString());
                 }
             }

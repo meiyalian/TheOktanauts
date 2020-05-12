@@ -2,7 +2,6 @@ package org.oktanauts.model;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -103,7 +102,7 @@ public class Patient {
 
     /* error handling --when measurement doesn't exist should call callback with null
         parameter and put null in hashmap */
-    public void updateMeasurement(String code, MeasurementCallback callback) {
+    public void updateMeasurement(String code, GetMeasurementCallback callback) {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + this.id
                 + "&code=" + code + "&_format=json";
 

@@ -26,7 +26,7 @@ public class GetPractitionerService {
     }
 
     public void getPractitioner (String practitionerID, GetPractitionerCallback callback) throws IOException, ParseException {
-        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant=" + practitionerID + "&_format=json";
+        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant.identifier=" + practitionerID + "&_format=json";
         boolean finished = false;
         PatientList patients = new PatientList(practitionerID);
         HashSet<String> patientIds = new HashSet<>();
@@ -40,7 +40,7 @@ public class GetPractitionerService {
                 String jsonText = readAll(rd);
                 JSONObject json = new JSONObject(jsonText);
 
-                // if doesn't have any encounter directly return
+                // if doesn't have any encounter, return a practitioner with 0 patient
                     if (!json.has("entry")){
                        p =  new Practitioner(practitionerID, patients);
                        if (callback != null){
@@ -85,5 +85,17 @@ public class GetPractitionerService {
             }
 
     }
+//
+//    public void getPractitionerTest(String practitionerID, GetPractitionerCallback callback) throws IOException {
+//        PatientList patientList = new PatientList(practitionerID);
+//        patientList.add(new Patient("1", "a", "b"));
+//        patientList.add(new Patient("2", "c", "d"));
+//        patientList.add(new Patient("3", "e", "f"));
+//        if (callback != null){
+//            callback.updateUI(new Practitioner(practitionerID, patientList));
+//        }
+//
+//    }
+
 
 }

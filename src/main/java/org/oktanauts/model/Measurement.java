@@ -21,6 +21,8 @@ public class Measurement {
         this.patient = p;
     }
 
+
+
     public Patient getPatient() {
         return patient;
     }

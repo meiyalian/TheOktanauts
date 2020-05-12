@@ -26,6 +26,8 @@ public class Patient {
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
     private boolean hasWarning = false;
     private HashMap<String, Measurement> measurements;
+    //for testing
+    private int testUpdate = 0;
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
         this.id = id;
@@ -40,8 +42,11 @@ public class Patient {
     }
 
     //for testing
-    public Patient(String id) {
+    public Patient(String id, String firstName, String surname) {
         this.id = id;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.measurements = new HashMap<>();
     }
 
     public String getId() {
@@ -129,10 +134,11 @@ public class Patient {
             }
             else{
                 measurements.put(code, null);
+                System.out.println("patient" + this.getName() + " doesnt have this measurement");
             }
 
             if (callback != null) {
-                callback.update();
+                callback.updateView();
             }
 
         }
@@ -147,4 +153,85 @@ public class Patient {
         }
         return measurements.get(code);
     }
+
+
+    //for testing
+//    public void updateMeasurementTesting(String code, GetMeasurementCallback callback){
+//        if (this.id == "1"){
+//            if(testUpdate == 0){
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,5,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 1){
+//
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,6,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 2){
+//                Measurement m = new Measurement(code,"cholesterol level", 8.0f, "mg/dL", new Timestamp(2020,1,1,1,7,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 3){
+//                Measurement m = new Measurement(code,"cholesterol level", 8.0f, "mg/dL", new Timestamp(2020,1,1,1,8,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//
+//        }
+//        if (this.id == "2"){
+//            if(testUpdate == 0){
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,5,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 1){
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,6,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 2){
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,7,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//            if(testUpdate == 3){
+//                Measurement m = new Measurement(code,"cholesterol level", 10.0f, "mg/dL", new Timestamp(2020,1,1,1,8,1,0), this );
+//                measurements.put(code, null);
+//
+//            }
+//
+//
+//        }
+//        if (this.id == "3"){
+//            if(testUpdate == 0){
+//                measurements.put(code, null);
+//            }
+//            if(testUpdate == 1){
+//                measurements.put(code, null);
+//            }
+//            if(testUpdate == 2){
+//                Measurement m = new Measurement(code,"cholesterol level", 5.0f, "mg/dL", new Timestamp(2020,1,1,1,5,1,0), this );
+//                measurements.put(code, null);
+//            }
+//            if(testUpdate == 3){
+//                Measurement m = new Measurement(code,"cholesterol level", 6.0f, "mg/dL", new Timestamp(2020,1,1,1,10,1,0), this );
+//                measurements.put(code, null);
+//            }
+//
+//        }
+//
+//        testUpdate +=1;
+//
+//    }
+//
+//    public Measurement getMeasurementTesting(String code) {
+//        if (!measurements.containsKey(code)) {
+//            updateMeasurementTesting(code, null);
+//        }
+//        return measurements.get(code);
+//    }
+
 }

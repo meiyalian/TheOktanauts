@@ -24,6 +24,9 @@ public class UserLoginController implements GetPractitionerCallback {
     private void enter(ActionEvent e) throws IOException, ParseException {
         if (isValid(idInput)){
             getPractitionerService.getPractitioner(idInput.getText(), this);
+
+            //testing
+//            getPractitionerService.getPractitionerTest(idInput.getText(), this);
         }
 
     }

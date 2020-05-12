@@ -31,6 +31,7 @@ public class MainPanelController implements Initializable {
     private Practitioner practitioner;
     private TableViewController tableViewController;
     private Timer refreshTimer;
+    private ArrayList<Patient>  monitoredPatients= new ArrayList<>();
 
 
 
@@ -40,14 +41,22 @@ public class MainPanelController implements Initializable {
     @FXML Spinner<Integer> refreshSpinner;
     @FXML Button backToLogin;
     @FXML Button viewDetail;
+    @FXML Button changeMonitoredPatient;
 
     @FXML
     private void setBackToLogin(ActionEvent e) throws IOException {
-        refreshTimer.cancel();
-        refreshTimer = null;
 
         App.setRoot("userLogin");
     }
+
+
+    // not done
+    @FXML
+    private void changeMonitoredPatients(ActionEvent e) throws IOException {
+
+
+    }
+
 
     @FXML
     private void viewPatientDetails(ActionEvent e) throws IOException {
@@ -117,7 +126,7 @@ public class MainPanelController implements Initializable {
             refreshTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    tableViewController.update();
+                    tableViewController.refreshMeasurementsData();
                     System.out.print("Refreshing - " + refreshSpinner.getValue());
                 }
             }, refreshSpinner.getValue() * 1000, refreshSpinner.getValue() * 1000);
@@ -144,7 +153,7 @@ public class MainPanelController implements Initializable {
         refreshTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                tableViewController.update();
+                tableViewController.refreshMeasurementsData();
                 System.out.print("Refreshing - " + refreshSpinner.getValue());
             }
         }, 0, refreshSpinner.getValue() * 1000);

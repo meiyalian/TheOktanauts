@@ -1,5 +1,6 @@
 package org.oktanauts;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import org.oktanauts.model.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView<Patient> monitorTable;
@@ -21,51 +23,76 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        update();
-        nameColumn.setCellFactory(p -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
+        updateView();
 
-                if (!empty) {
-                    Patient patient = getTableRow().getItem();
-                    if (patient.getHasWarning()) {
-                        setTextFill(Color.RED);
-                    }
-                    setText(patient.getName());
-                }
-            }
-        });
 
-        valColumn.setCellFactory(p -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
+//        nameColumn.setCellFactory(p -> new TableCell<>() {
+//            @Override
+//            protected void updateItem(String item, boolean empty) {
+//                super.updateItem(item, empty);
+//
+//                if (!empty) {
+//                    Patient patient = getTableRow().getItem();
+//
+//                    if(patient == null){
+//                        System.out.println("null");
+//                    }
+//                    else{
+//                        System.out.println(patient.getName());
+//                    }
+//
+//                    if (patient.getHasWarning()) {
+//                        setTextFill(Color.RED);
+//                    }
+//                    setText(patient.getName());
+//                }
+//            }
+//        });
+//
+//        valColumn.setCellFactory(p -> new TableCell<>() {
+//            @Override
+//            protected void updateItem(String item, boolean empty) {
+//                super.updateItem(item, empty);
+//
+//                if (!empty) {
+//                    Patient patient = getTableRow().getItem();
+//                    if (patient.getHasWarning()) {
+//                        setTextFill(Color.RED);
+//                    }
+//                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").toString(): null);
+//                }
+//            }
+//        });
+//
+//        timeColumn.setCellFactory(p -> new TableCell<>() {
+//            @Override
+//            protected void updateItem(String item, boolean empty) {
+//                super.updateItem(item, empty);
+//
+//                if (!empty) {
+//                    Patient patient = getTableRow().getItem();
+//                    if (patient.getHasWarning()) {
+//                        setTextFill(Color.RED);
+//                    }
+//                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").getTimestamp().toString(): null);
+//                }
+//            }
+//        });
 
-                if (!empty) {
-                    Patient patient = getTableRow().getItem();
-                    if (patient.getHasWarning()) {
-                        setTextFill(Color.RED);
-                    }
-                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").toString(): null);
-                }
-            }
-        });
+        nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
-        timeColumn.setCellFactory(p -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
 
-                if (!empty) {
-                    Patient patient = getTableRow().getItem();
-                    if (patient.getHasWarning()) {
-                        setTextFill(Color.RED);
-                    }
-                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").getTimestamp().toString(): null);
-                }
-            }
-        });
+
+        valColumn.setCellValueFactory(p ->
+                new ReadOnlyObjectWrapper(p.getValue()
+                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").toString(): ""));
+
+
+
+        timeColumn.setCellValueFactory(p ->
+                new ReadOnlyObjectWrapper(p.getValue()
+                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").getTimestamp():""));
+
 
         nameColumn.setMinWidth(170);
         valColumn.setMinWidth(100);
@@ -83,13 +110,24 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     }
 
     public void addMonitoredPatient(Patient p){
-        p.updateMeasurement("2093-3", this);
+
+
         monitoredPatients.add(p);
-        update();
+        p.updateMeasurement("2093-3", this);
+
+
+//        if (p.getMeasurement("2093-3") != null){
+//            System.out.println("measurement " +p.getMeasurement("2093-3").getValue() + "for "+  p.getName() );
+//        }else{
+//            System.out.println("measurement  is null for" +  p.getName() );
+//        }
+//
+//        for (Patient pa: monitoredPatients){
+//            System.out.println("add patient: " + pa.getName());
+//        }
     }
 
     public void removeMonitoredPatient(Patient p){
-        System.out.println("remove");
         int index = 0;
         boolean isFound = false;
         while( index < monitoredPatients.size()){
@@ -101,18 +139,38 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
         if (isFound) {
             monitoredPatients.remove(index);
-            update();
+            updateView();
         }
+//
+//        for (Patient pa: monitoredPatients){
+//            System.out.println("remove patient: " + pa.getName());
+//        }
+//        if(monitoredPatients.size() == 0){
+//            System.out.println("patient size 0 ");
+//        }
     }
 
-    public void update() {
+    public void refreshMeasurementsData()  {
+        synchronized(monitoredPatients ) {
+            for (Patient patient : monitoredPatients){
+                patient.updateMeasurement("2093-3", this);
+            }
+        }
+
+    }
+
+    @Override
+    public void updateView() {
+        updateHighlight();
+    }
+
+    public void updateHighlight(){
         double sum = 0.0;
         int patientWithMeasurement = 0;
         for (Patient patient : monitoredPatients) {
-            patient.updateMeasurement("2093-3", null);
             Measurement m = patient.getMeasurement("2093-3");
             if (m != null){
-                sum += patient.getMeasurement("2093-3").getValue();
+                sum += m.getValue();
                 patientWithMeasurement += 1;
             }
         }
@@ -120,11 +178,41 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         if (patientWithMeasurement >0){
             average = sum / patientWithMeasurement;
         }
+        System.out.println("average value: " + average);
 
         for (Patient patient : monitoredPatients) {
             Measurement m = patient.getMeasurement("2093-3");
             patient.setHasWarning(m != null && m.getValue() > average);
         }
+
+
     }
+
+    //testing
+//    private void updateTesting() {
+//        double sum = 0.0;
+//        int patientWithMeasurement = 0;
+//        for (Patient patient : monitoredPatients) {
+//            patient.updateMeasurementTesting("2093-3", null);
+//            Measurement m = patient.getMeasurementTesting("2093-3");
+//            if (m != null){
+//                sum += m.getValue();
+//                patientWithMeasurement += 1;
+//            }
+//        }
+//        double average = 0;
+//        if (patientWithMeasurement >0){
+//            average = sum / patientWithMeasurement;
+//        }
+//
+//        System.out.println("average value: " + average);
+//
+//        for (Patient patient : monitoredPatients) {
+//            Measurement m = patient.getMeasurementTesting("2093-3");
+//            patient.setHasWarning(m != null && m.getValue() > average);
+//        }
+//
+//    }
+
 }
 

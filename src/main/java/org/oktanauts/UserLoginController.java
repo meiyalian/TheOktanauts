@@ -2,7 +2,6 @@ package org.oktanauts;
 
 import java.io.IOException;
 import java.text.ParseException;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +11,9 @@ import org.oktanauts.model.GetPractitionerService;
 import org.oktanauts.model.Practitioner;
 import org.oktanauts.model.GetPractitionerCallback;
 
-
+/**
+ * This class is the controller class for the user login page of the app
+ */
 public class UserLoginController implements GetPractitionerCallback {
 
 
@@ -24,14 +25,11 @@ public class UserLoginController implements GetPractitionerCallback {
     public void enter(ActionEvent e) throws IOException, ParseException {
         if (isValidInput(idInput)){
             getPractitionerService.getPractitioner(idInput.getText(), this);
-
-            //testing
-//            getPractitionerService.getPractitionerTest(idInput.getText(), this);
         }
 
     }
 
-    //check if the input is a valid (numeric)
+    //check if the input is valid (numeric)
     private boolean isValidInput(TextField textField){
         try {
             int ID = Integer.parseInt(textField.getText());

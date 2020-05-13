@@ -6,12 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import org.oktanauts.model.*;
-
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.CountDownLatch;
+
+/**
+ * This class is the controller class for the monitor table of the app
+ */
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView<Patient> monitorTable;
@@ -20,7 +21,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
     private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
     private GetMeasurementService getMeasurementService = new GetMeasurementService();
-
+    private double averageCholesterol = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -42,10 +43,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             @Override
             public void updateItem(Patient item, boolean empty){
                 super.updateItem(item, empty);
-
-                if (item == null || empty) {
+                if (item == null || empty || item.getMeasurement("2093-3") == null) {
                     setStyle("");
-                } else if (item.getHasWarning()) {
+                } else if (item.getMeasurement("2093-3").getValue() > averageCholesterol) {
                     setStyle("-fx-background-color: #F08888;");
                 }
             }
@@ -66,15 +66,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         return monitorTable.getSelectionModel().getSelectedItem();
     }
 
-
-
     public synchronized void addMonitoredPatient(Patient p){
-
-
         monitoredPatients.add(p);
         getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
-
-
     }
 
     public synchronized void removeMonitoredPatient(Patient p){
@@ -93,13 +87,10 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
     }
 
-
-
     public synchronized void refreshMeasurementsData()  {
       for(Patient p: monitoredPatients){
           getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
       }
-
     }
 
     @Override
@@ -124,10 +115,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
         System.out.println("average value: " + average);
 
-        for (Patient patient : monitoredPatients) {
-            Measurement m = patient.getMeasurement("2093-3");
-            patient.setHasWarning(m != null && m.getValue() > average);
-        }
+        this.averageCholesterol = average;
     }
 }
 

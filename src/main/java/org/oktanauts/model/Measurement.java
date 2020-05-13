@@ -1,7 +1,9 @@
 package org.oktanauts.model;
 
 import java.sql.Timestamp;
-
+/**
+ * This class is the measurement model class
+ */
 public class Measurement {
 
     private String code;

@@ -1,15 +1,12 @@
 package org.oktanauts.model;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
 
+/**
+ * This class is the practitioner model class
+ * There is only one practitioner object exist at a time
+ */
 public class Practitioner {
 
     private String id;
@@ -25,9 +22,7 @@ public class Practitioner {
         return id;
     }
 
-    public PatientList getPatientList() {
-        return patients;
-    }
+
     public ArrayList<Patient> getPatients() {
         if (patients != null){
             return patients.getAllPatients();

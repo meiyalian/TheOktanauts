@@ -6,6 +6,11 @@ import org.oktanauts.model.Patient;
 
 import java.util.ArrayList;
 
+/**
+ * This class is a wrapper class for storing a list of patient objects.
+ * Currently it's not as useful but it will be helpful if some filter functions are
+ * required.
+ */
 public class PatientList implements Aggregate {
     private ArrayList<Patient> patients= new ArrayList<>();
     private String practitionerId;
@@ -28,6 +33,11 @@ public class PatientList implements Aggregate {
         return new PatientIterator();
     }
 
+
+
+    /**
+     * This class is the default normal iterator for patientList object.
+     */
     private class PatientIterator implements Iterator{
 
         int index;

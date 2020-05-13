@@ -1,6 +1,9 @@
 package org.oktanauts.model;
 
-import java.util.ArrayList;
+
+/**
+ * This class is interface for class that uses the getMeasurementService
+ */
 
 public interface GetMeasurementCallback {
     void updateView();

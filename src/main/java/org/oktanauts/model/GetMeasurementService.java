@@ -8,8 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
+/**
+ * This class is for updating a patient's latest measurement
+ */
 public class GetMeasurementService {
 
     private static String readAll(Reader rd) throws IOException {

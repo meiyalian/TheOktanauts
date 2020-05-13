@@ -1,10 +1,12 @@
 package org.oktanauts;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.oktanauts.model.Patient;
 
-
+/**
+ * This class is the controller class for viewing a patient details from
+ * selecting a patient in the monitor table
+ */
 public class DetailViewController{
     @FXML Label name;
     @FXML Label birthday;

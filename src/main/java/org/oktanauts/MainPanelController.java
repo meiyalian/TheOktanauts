@@ -1,8 +1,6 @@
 package org.oktanauts;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,28 +9,26 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.oktanauts.model.*;
-
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
+/**
+ * This class is the controller class for the main panel of the app
+ */
 public class MainPanelController implements Initializable {
     private Practitioner practitioner;
     private TableViewController tableViewController;
     private Timer refreshTimer;
-//    private ArrayList<Patient>  monitoredPatients= new ArrayList<>();
-
 
 
     @FXML Label IDdisplay;
@@ -48,26 +44,14 @@ public class MainPanelController implements Initializable {
         App.setRoot("userLogin");
     }
 
-
-
-    @FXML
-    private void changeMonitoredPatients(ActionEvent e) throws IOException {
-
-
-    }
-
-
     @FXML
     private void viewPatientDetails(ActionEvent e) throws IOException {
         Patient p = tableViewController.selectedPatient();
         if (p!= null){
-
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource("/org/oktanauts/patientDetails.fxml"));
             Parent root = loader.load();
             DetailViewController detailViewController = loader.getController();
-
-            System.out.println(p.getCity());
             detailViewController.initData(p);
             Scene detailPage = new Scene(root);
             Stage newWindow = new Stage();
@@ -81,32 +65,18 @@ public class MainPanelController implements Initializable {
     public void initData(Practitioner practitioner) {
         this.practitioner = practitioner;
         IDdisplay.setText("PractitionerID: " + practitioner.getId());
-
+        //set listener to checkbox cell
         ObservableList<Patient> allPatients = FXCollections.observableArrayList(practitioner.getPatients());
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             if (isSelected) {
-//                refreshTimer.cancel();
                 tableViewController.addMonitoredPatient(patient);
-
-
             }
             if (wasSelected && !isSelected) {
-
                 tableViewController.removeMonitoredPatient(patient);
-
             }
-
         }));
 
-//        Iterator iter = patients.getIterator();
-//        while (iter.hasNext()){
-//            Patient p = (Patient) iter.next();
-//            allPatients.add(p);
-////            patientListView.getItems().add(p);
-//        }
-
         // initialize the list view
-
         patientListView.getItems().addAll(allPatients);
         patientListView.setCellFactory(CheckBoxListCell.forListView(Patient::selectedProperty, new StringConverter<Patient>() {
             @Override

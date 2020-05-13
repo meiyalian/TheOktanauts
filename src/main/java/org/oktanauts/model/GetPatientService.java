@@ -14,7 +14,9 @@ import java.text.SimpleDateFormat;
 
 import java.io.Reader;
 import java.util.Date;
-
+/**
+ * This class is for creating a patient object
+ */
 public class GetPatientService {
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();

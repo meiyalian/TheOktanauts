@@ -15,6 +15,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashSet;
 
+/**
+ * This class is for creating a practitioner obeject + retrieve all
+ * of his/her patients through encounter data
+ */
+
 public class GetPractitionerService {
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();

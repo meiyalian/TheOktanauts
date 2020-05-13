@@ -1,18 +1,15 @@
 package org.oktanauts.model;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.HashMap;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import org.json.JSONObject;
 
+/**
+ * This class is the patient model class
+ */
 public class Patient {
 
     private String id;
@@ -24,7 +21,6 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private boolean hasWarning = false;
     private HashMap<String, Measurement> measurements;
 
 
@@ -88,13 +84,6 @@ public class Patient {
         return this.city + ", " + this.state + ", " + this.country;
     }
 
-    public Boolean getHasWarning() {
-        return hasWarning;
-    }
-
-    public void setHasWarning(boolean hasWarning) {
-        this.hasWarning = hasWarning;
-    }
 
     public BooleanProperty selectedProperty() {
         return isMonitored;
@@ -103,8 +92,6 @@ public class Patient {
     public boolean isSelected() {
         return isMonitored.get();
     }
-
-
 
     public void addMeasurement(String measurementCode, Measurement measurement) {
         measurements.put(measurementCode, measurement);

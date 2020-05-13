@@ -10,8 +10,10 @@ import javafx.scene.paint.Color;
 import org.oktanauts.model.*;
 
 import java.net.URL;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
+import java.util.*;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView<Patient> monitorTable;
@@ -19,6 +21,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
     private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
     private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
+    private GetMeasurementService getMeasurementService = new GetMeasurementService();
 
 
     @Override
@@ -109,25 +112,18 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         return monitorTable.getSelectionModel().getSelectedItem();
     }
 
-    public void addMonitoredPatient(Patient p){
+
+
+    public synchronized void addMonitoredPatient(Patient p){
 
 
         monitoredPatients.add(p);
-        p.updateMeasurement("2093-3", this);
+        getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
 
 
-//        if (p.getMeasurement("2093-3") != null){
-//            System.out.println("measurement " +p.getMeasurement("2093-3").getValue() + "for "+  p.getName() );
-//        }else{
-//            System.out.println("measurement  is null for" +  p.getName() );
-//        }
-//
-//        for (Patient pa: monitoredPatients){
-//            System.out.println("add patient: " + pa.getName());
-//        }
     }
 
-    public void removeMonitoredPatient(Patient p){
+    public synchronized void removeMonitoredPatient(Patient p){
         int index = 0;
         boolean isFound = false;
         while( index < monitoredPatients.size()){
@@ -139,23 +135,16 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
         if (isFound) {
             monitoredPatients.remove(index);
+
             updateView();
         }
-//
-//        for (Patient pa: monitoredPatients){
-//            System.out.println("remove patient: " + pa.getName());
-//        }
-//        if(monitoredPatients.size() == 0){
-//            System.out.println("patient size 0 ");
-//        }
+
     }
 
-    public void refreshMeasurementsData()  {
-        synchronized(monitoredPatients ) {
-            for (Patient patient : monitoredPatients){
-                patient.updateMeasurement("2093-3", this);
-            }
-        }
+    public synchronized void refreshMeasurementsData()  {
+      for(Patient p: monitoredPatients){
+          getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
+      }
 
     }
 

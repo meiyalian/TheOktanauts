@@ -21,8 +21,8 @@ public class UserLoginController implements GetPractitionerCallback {
     @FXML public TextField idInput;
 
     @FXML
-    private void enter(ActionEvent e) throws IOException, ParseException {
-        if (isValid(idInput)){
+    public void enter(ActionEvent e) throws IOException, ParseException {
+        if (isValidInput(idInput)){
             getPractitionerService.getPractitioner(idInput.getText(), this);
 
             //testing
@@ -31,7 +31,8 @@ public class UserLoginController implements GetPractitionerCallback {
 
     }
 
-    public boolean isValid(TextField textField){
+    //check if the input is a valid (numeric)
+    private boolean isValidInput(TextField textField){
         try {
             int ID = Integer.parseInt(textField.getText());
             return true;

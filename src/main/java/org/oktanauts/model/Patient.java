@@ -26,8 +26,7 @@ public class Patient {
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
     private boolean hasWarning = false;
     private HashMap<String, Measurement> measurements;
-    //for testing
-    private int testUpdate = 0;
+
 
     public Patient(String id, String firstName, String surname, Date birthday, String gender, String city, String state, String country) {
         this.id = id;
@@ -95,61 +94,14 @@ public class Patient {
         return isMonitored.get();
     }
 
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
+    public void addMeasurement(String measurementCode, Measurement measurement){
+        measurements.put(measurementCode,measurement);
     }
 
-
-    /* error handling --when measurement doesn't exist should call callback with null
-        parameter and put null in hashmap */
-    public void updateMeasurement(String code, GetMeasurementCallback callback) {
-        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + this.id
-                + "&code=" + code + "&_format=json";
-
-        System.out.println(url);
-        try (InputStream is = new URL(url).openStream()) {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            String jsonText = readAll(rd);
-            JSONObject json = new JSONObject(jsonText);
-
-            if (json.has("entry")){
-                JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                        .getJSONObject("valueQuantity");
-
-                Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
-                        .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                                .getString("issued")).getTime());
-                Float value = valueQuantity.getFloat("value");
-                String unit = valueQuantity.getString("unit");
-                String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                        .getJSONObject("code").getString("text");
-
-                Measurement result = new Measurement(code, name, value, unit, dateTime, this);
-                measurements.put(code, result);
-            }
-            else{
-                measurements.put(code, null);
-                System.out.println("patient" + this.getName() + " doesnt have this measurement");
-            }
-
-            if (callback != null) {
-                callback.updateView();
-            }
-
-        }
-        catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
 
     public Measurement getMeasurement(String code) {
         if (!measurements.containsKey(code)) {
-            updateMeasurement(code, null);
+            return null;
         }
         return measurements.get(code);
     }

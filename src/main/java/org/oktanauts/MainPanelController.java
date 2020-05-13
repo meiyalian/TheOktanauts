@@ -31,7 +31,7 @@ public class MainPanelController implements Initializable {
     private Practitioner practitioner;
     private TableViewController tableViewController;
     private Timer refreshTimer;
-    private ArrayList<Patient>  monitoredPatients= new ArrayList<>();
+//    private ArrayList<Patient>  monitoredPatients= new ArrayList<>();
 
 
 
@@ -41,16 +41,15 @@ public class MainPanelController implements Initializable {
     @FXML Spinner<Integer> refreshSpinner;
     @FXML Button backToLogin;
     @FXML Button viewDetail;
-    @FXML Button changeMonitoredPatient;
 
     @FXML
     private void setBackToLogin(ActionEvent e) throws IOException {
-
+        refreshTimer.cancel();
         App.setRoot("userLogin");
     }
 
 
-    // not done
+
     @FXML
     private void changeMonitoredPatients(ActionEvent e) throws IOException {
 
@@ -86,11 +85,15 @@ public class MainPanelController implements Initializable {
         ObservableList<Patient> allPatients = FXCollections.observableArrayList(practitioner.getPatients());
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             if (isSelected) {
+//                refreshTimer.cancel();
                 tableViewController.addMonitoredPatient(patient);
+
 
             }
             if (wasSelected && !isSelected) {
+
                 tableViewController.removeMonitoredPatient(patient);
+
             }
 
         }));

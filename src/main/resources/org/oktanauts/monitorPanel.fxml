@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.MainPanelController">
-   <children>
-       <SplitPane dividerPositions="0.29797979797979796" layoutY="-5.0" prefHeight="509.0" prefWidth="691.0">
-          <items>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                  <children>
-                  <VBox layoutX="-4.0" prefHeight="507.0" prefWidth="208.0">
-                     <children>
-                            <Label alignment="CENTER" prefHeight="40.0" prefWidth="209.0" text="All Patients" textAlignment="CENTER">
-                                <font>
-                                    <Font name="Arial Bold" size="13.0" />
-                                </font>
-                            </Label>
-                            <ListView fx:id="patientListView" prefHeight="420.0" prefWidth="208.0" />
-                        <Button fx:id="changeMonitorPatients" mnemonicParsing="false" prefHeight="49.0" prefWidth="208.0" text="Add to Monitor Table" />
-                     </children>
-                  </VBox>
-                  </children>
-              </AnchorPane>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="508.0">
-                 <children>
-                     <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="507.0" prefWidth="491.0">
-                         <items>
-                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="163.0" prefWidth="482.0">
-                                <children>
-                                    <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0" prefWidth="199.0" text="Practitioner ID: " />
-                                    <Spinner fx:id="refreshSpinner" layoutX="398.0" layoutY="50.0" onMouseClicked="#onRefreshChange" prefHeight="26.0" prefWidth="67.0">
-                                        <valueFactory>
-                                            <SpinnerValueFactory.IntegerSpinnerValueFactory amountToStepBy="5" initialValue="15" max="45" min="5" />
-                                        </valueFactory>
-                                    </Spinner>
-                                    <Label layoutX="398.0" layoutY="27.0" text="Refresh Rate" />
-                                    <Button fx:id="backToLogin" layoutX="22.0" layoutY="58.0" mnemonicParsing="false" onAction="#setBackToLogin" text="Log out" />
-                                    <Button fx:id="viewDetail" layoutX="94.0" layoutY="58.0" mnemonicParsing="false" onAction="#viewPatientDetails" text="View patient detail" />
-                                </children>
-                             </AnchorPane>
-                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="393.0" prefWidth="494.0">
-                                 <children>
-                                     <BorderPane fx:id="tablePane" prefHeight="398.0" prefWidth="489.0" />
-                                 </children>
-                             </AnchorPane>
-                         </items>
-                     </SplitPane>
-                 </children>
-              </AnchorPane>
-          </items>
-       </SplitPane>
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.oktanauts.MainPanelController">
+    <SplitPane dividerPositions="0.29797979797979796" layoutY="-5.0" prefHeight="509.0" prefWidth="691.0">
+        <items>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                <VBox layoutX="-4.0" prefHeight="507.0" prefWidth="208.0">
+                    <Label alignment="CENTER" prefHeight="40.0" prefWidth="209.0" text="All Patients"
+                           textAlignment="CENTER">
+                        <font>
+                            <Font name="Arial Bold" size="13.0"/>
+                        </font>
+                    </Label>
+                    <ListView fx:id="patientListView" prefHeight="469.0" prefWidth="208.0"/>
+                </VBox>
+            </AnchorPane>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="508.0">
+                <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL"
+                           prefHeight="507.0" prefWidth="491.0">
+                    <items>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="163.0" prefWidth="482.0">
+                            <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0"
+                                   prefWidth="199.0" text="Practitioner ID: "/>
+                            <Spinner fx:id="refreshSpinner" layoutX="398.0" layoutY="50.0"
+                                     onMouseClicked="#onRefreshChange" prefHeight="26.0" prefWidth="67.0">
+                                <valueFactory>
+                                    <SpinnerValueFactory.IntegerSpinnerValueFactory amountToStepBy="5"
+                                                                                    initialValue="15" max="45"
+                                                                                    min="5"/>
+                                </valueFactory>
+                            </Spinner>
+                            <Label layoutX="398.0" layoutY="27.0" text="Refresh Rate"/>
+                            <Button fx:id="backToLogin" layoutX="22.0" layoutY="58.0" mnemonicParsing="false"
+                                    onAction="#setBackToLogin" text="Log out"/>
+                            <Button fx:id="viewDetail" layoutX="94.0" layoutY="58.0" mnemonicParsing="false"
+                                    onAction="#viewPatientDetails" text="View patient detail"/>
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="393.0" prefWidth="494.0">
+                            <BorderPane fx:id="tablePane" prefHeight="398.0" prefWidth="489.0"/>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+            </AnchorPane>
+        </items>
+    </SplitPane>
 </AnchorPane>

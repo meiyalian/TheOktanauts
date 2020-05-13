@@ -10,10 +10,8 @@ import javafx.scene.paint.Color;
 import org.oktanauts.model.*;
 
 import java.net.URL;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
-import java.util.*;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML  private TableView<Patient> monitorTable;
@@ -28,73 +26,30 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void initialize(URL location, ResourceBundle resources) {
         updateView();
 
-
-//        nameColumn.setCellFactory(p -> new TableCell<>() {
-//            @Override
-//            protected void updateItem(String item, boolean empty) {
-//                super.updateItem(item, empty);
-//
-//                if (!empty) {
-//                    Patient patient = getTableRow().getItem();
-//
-//                    if(patient == null){
-//                        System.out.println("null");
-//                    }
-//                    else{
-//                        System.out.println(patient.getName());
-//                    }
-//
-//                    if (patient.getHasWarning()) {
-//                        setTextFill(Color.RED);
-//                    }
-//                    setText(patient.getName());
-//                }
-//            }
-//        });
-//
-//        valColumn.setCellFactory(p -> new TableCell<>() {
-//            @Override
-//            protected void updateItem(String item, boolean empty) {
-//                super.updateItem(item, empty);
-//
-//                if (!empty) {
-//                    Patient patient = getTableRow().getItem();
-//                    if (patient.getHasWarning()) {
-//                        setTextFill(Color.RED);
-//                    }
-//                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").toString(): null);
-//                }
-//            }
-//        });
-//
-//        timeColumn.setCellFactory(p -> new TableCell<>() {
-//            @Override
-//            protected void updateItem(String item, boolean empty) {
-//                super.updateItem(item, empty);
-//
-//                if (!empty) {
-//                    Patient patient = getTableRow().getItem();
-//                    if (patient.getHasWarning()) {
-//                        setTextFill(Color.RED);
-//                    }
-//                    setText(patient.getMeasurement("2093-3")!= null ? patient.getMeasurement("2093-3").getTimestamp().toString(): null);
-//                }
-//            }
-//        });
-
         nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
-
-
 
         valColumn.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").toString(): ""));
-
-
+                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3")
+                        .toString(): ""));
 
         timeColumn.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3").getTimestamp():""));
+                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3")
+                        .getTimestamp():""));
+
+        monitorTable.setRowFactory(row -> new TableRow<Patient>(){
+            @Override
+            public void updateItem(Patient item, boolean empty){
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setStyle("");
+                } else if (item.getHasWarning()) {
+                    setStyle("-fx-background-color: #F08888;");
+                }
+            }
+        });
 
 
         nameColumn.setMinWidth(170);
@@ -105,7 +60,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitorTable.getColumns().addAll(nameColumn, valColumn, timeColumn);
         monitorTable.setPlaceholder(new Label("No patients being monitored"));
         monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
     }
 
     public Patient selectedPatient(){
@@ -126,8 +80,8 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public synchronized void removeMonitoredPatient(Patient p){
         int index = 0;
         boolean isFound = false;
-        while( index < monitoredPatients.size()){
-            if(monitoredPatients.get(index).equals(p)){
+        while (index < monitoredPatients.size()){
+            if (monitoredPatients.get(index).equals(p)){
                 isFound = true;
                 break;
             }
@@ -135,11 +89,11 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
         if (isFound) {
             monitoredPatients.remove(index);
-
             updateView();
         }
-
     }
+
+
 
     public synchronized void refreshMeasurementsData()  {
       for(Patient p: monitoredPatients){
@@ -155,17 +109,18 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     public void updateHighlight(){
         double sum = 0.0;
-        int patientWithMeasurement = 0;
+        int count = 0;
         for (Patient patient : monitoredPatients) {
             Measurement m = patient.getMeasurement("2093-3");
             if (m != null){
                 sum += m.getValue();
-                patientWithMeasurement += 1;
+                count += 1;
             }
         }
-        double average = 0;
-        if (patientWithMeasurement >0){
-            average = sum / patientWithMeasurement;
+
+        double average = 0.0;
+        if (count > 0){
+            average = sum / count;
         }
         System.out.println("average value: " + average);
 
@@ -173,35 +128,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             Measurement m = patient.getMeasurement("2093-3");
             patient.setHasWarning(m != null && m.getValue() > average);
         }
-
-
     }
-
-    //testing
-//    private void updateTesting() {
-//        double sum = 0.0;
-//        int patientWithMeasurement = 0;
-//        for (Patient patient : monitoredPatients) {
-//            patient.updateMeasurementTesting("2093-3", null);
-//            Measurement m = patient.getMeasurementTesting("2093-3");
-//            if (m != null){
-//                sum += m.getValue();
-//                patientWithMeasurement += 1;
-//            }
-//        }
-//        double average = 0;
-//        if (patientWithMeasurement >0){
-//            average = sum / patientWithMeasurement;
-//        }
-//
-//        System.out.println("average value: " + average);
-//
-//        for (Patient patient : monitoredPatients) {
-//            Measurement m = patient.getMeasurementTesting("2093-3");
-//            patient.setHasWarning(m != null && m.getValue() > average);
-//        }
-//
-//    }
-
 }
 

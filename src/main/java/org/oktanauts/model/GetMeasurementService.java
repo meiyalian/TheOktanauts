@@ -27,7 +27,7 @@ public class GetMeasurementService {
 
 
             String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
-                    + "&code=" + code + "&_format=json";
+                    + "&code=" + code + "&_sort=-date&_format=json";
 
             System.out.println(url);
             try (InputStream is = new URL(url).openStream()) {

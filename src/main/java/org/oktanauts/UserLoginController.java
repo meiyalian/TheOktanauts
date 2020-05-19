@@ -5,6 +5,8 @@ import java.text.ParseException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.oktanauts.model.GetPractitionerService;
@@ -30,11 +32,21 @@ public class UserLoginController implements GetPractitionerCallback {
     }
 
     //check if the input is valid (numeric)
-    private boolean isValidInput(TextField textField){
+    private boolean isValidInput(TextField textField) throws IOException {
         try {
             int ID = Integer.parseInt(textField.getText());
             return true;
         } catch (NumberFormatException e){
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getResource("/org/oktanauts/errorView.fxml"));
+            Parent root = loader.load();
+            ErrorViewController errorView = loader.getController();
+            errorView.initData("Input is not valid. Please enter your practitioner Id.");
+            Scene errorPage = new Scene(root);
+            Stage newWindow = new Stage();
+            newWindow.setScene(errorPage);
+            newWindow.setResizable(false);
+            newWindow.show();
             return false;
         }
     }

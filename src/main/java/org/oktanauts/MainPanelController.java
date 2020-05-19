@@ -56,6 +56,7 @@ public class MainPanelController implements Initializable {
             Scene detailPage = new Scene(root);
             Stage newWindow = new Stage();
             newWindow.setScene(detailPage);
+            newWindow.setResizable(false);
             newWindow.show();
         }
     }

@@ -23,17 +23,14 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("userLogin"));
-//        scene = new Scene(loadFXML("patientDetails"));
         App.stage = stage;
 
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent t) {
-                Platform.exit();
-                System.exit(0);
-            }
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            System.exit(0);
         });
     }
 

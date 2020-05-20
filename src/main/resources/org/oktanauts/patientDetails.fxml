@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.oktanauts.DetailViewController">
+   <VBox layoutX="14.0" layoutY="12.0" prefHeight="178.0" prefWidth="324.0">
+      <children>
+         <Label fx:id="name" contentDisplay="RIGHT" prefHeight="29.0" prefWidth="330.0" text="Name: "
+                textAlignment="CENTER"/>
+         <Label fx:id="birthday" contentDisplay="RIGHT" prefHeight="29.0" prefWidth="334.0" text="Birthday:"
+                textAlignment="CENTER"/>
+         <Label fx:id="gender" contentDisplay="RIGHT" prefHeight="29.0" prefWidth="337.0" text="Gender:"
+                textAlignment="CENTER"/>
+         <Label fx:id="address" contentDisplay="RIGHT" prefHeight="29.0" prefWidth="333.0" text="Address:"
+                textAlignment="CENTER"/>
+      </children>
+   </VBox>
+</AnchorPane>

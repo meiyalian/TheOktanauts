@@ -38,15 +38,27 @@ public class MainPanelController implements Initializable {
     @FXML Button backToLogin;
     @FXML Button viewDetail;
 
+    /**
+     * Resets the current stage and goes back to the login view
+     *
+     * @param e the action event
+     * @throws IOException
+     */
     @FXML
     private void setBackToLogin(ActionEvent e) throws IOException {
         refreshTimer.cancel();
         App.setRoot("userLogin");
     }
 
+    /**
+     * Sets up the view containing all of the patient details
+     *
+     * @param e the action event
+     * @throws IOException
+     */
     @FXML
     private void viewPatientDetails(ActionEvent e) throws IOException {
-        Patient p = tableViewController.selectedPatient();
+        Patient p = tableViewController.getSelectedPatient();
         if (p!= null){
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource("/org/oktanauts/patientDetails.fxml"));
@@ -61,11 +73,15 @@ public class MainPanelController implements Initializable {
         }
     }
 
-
+    /**
+     * Initialises the patient data of the practitioner for the view
+     *
+     * @param practitioner the practitioner whose details and patients are being displayed
+     */
     // initializing process after the practitioner is created
     public void initData(Practitioner practitioner) {
         this.practitioner = practitioner;
-        IDdisplay.setText("PractitionerID: " + practitioner.getId());
+        IDdisplay.setText("Practitioner Identifier: " + practitioner.getIdentifier());
         //set listener to checkbox cell
         ObservableList<Patient> allPatients = FXCollections.observableArrayList(practitioner.getPatients());
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
@@ -93,6 +109,9 @@ public class MainPanelController implements Initializable {
 
     }
 
+    /**
+     * Resets the refresh timer when changes to the refresh spinner occur
+     */
     public void onRefreshChange() {
         if (refreshSpinner.getValue() != null) {
             refreshTimer.cancel();
@@ -107,7 +126,12 @@ public class MainPanelController implements Initializable {
         }
     }
 
-    // initialize views in the panel
+    /**
+     * Initialises the view
+     *
+     * @param location the url location
+     * @param resources the bundle of resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //load table view

@@ -23,6 +23,13 @@ public class UserLoginController implements GetPractitionerCallback {
 
     @FXML public TextField idInput;
 
+    /**
+     * Handles the login attempt caused by the enter event
+     *
+     * @param e the action event
+     * @throws IOException
+     * @throws ParseException
+     */
     @FXML
     public void enter(ActionEvent e) throws IOException, ParseException {
         if (isValidInput(idInput)){
@@ -31,10 +38,16 @@ public class UserLoginController implements GetPractitionerCallback {
 
     }
 
-    //check if the input is valid (numeric)
+    /**
+     * Validates that the inputted practitioner identifier is of a valid format
+     *
+     * @param textField the text field of the practitioner identifier input
+     * @return a boolean value of whether the inputted practitioner identifier is valid
+     * @throws IOException
+     */
     private boolean isValidInput(TextField textField) throws IOException {
         try {
-            int ID = Integer.parseInt(textField.getText());
+            int identifier = Integer.parseInt(textField.getText());
             return true;
         } catch (NumberFormatException e){
             FXMLLoader loader = new FXMLLoader();
@@ -51,6 +64,12 @@ public class UserLoginController implements GetPractitionerCallback {
         }
     }
 
+    /**
+     * Updates the UI when the practitioner details have been correctly fetched
+     *
+     * @param practitioner the practitioner that has just logged in
+     * @throws IOException
+     */
     @Override
     public void updateUI(Practitioner practitioner ) throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -60,14 +79,6 @@ public class UserLoginController implements GetPractitionerCallback {
         mainPage.initData(practitioner);
         Stage window = App.getStage();
         window.show();
-
-    }
-
-    // currently there is no login function
-    //if the practitioner does not exist the user is still able to enter the app
-    //yet to be implemented
-    @Override
-    public void getPractitionerFail() {
 
     }
 }

@@ -19,8 +19,13 @@ import java.util.HashSet;
  * This class is for creating a practitioner obeject + retrieve all
  * of his/her patients through encounter data
  */
-
 public class GetPractitionerService {
+    /**
+     * Reads data from reader into string
+     *
+     * @param rd the reader of the string
+     * @return the string of the data from the reader
+     */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -30,10 +35,18 @@ public class GetPractitionerService {
         return sb.toString();
     }
 
-    public void getPractitioner (String practitionerID, GetPractitionerCallback callback) throws IOException, ParseException {
-        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant.identifier=" + practitionerID + "&_format=json";
+    /**
+     * Populates a practitioner from the data present in the hapi fhir jpaserver
+     *
+     * @param practIdentifier the identifier of the practitioner to be queries
+     * @param callback optional callback for after the practitioner is created
+     * @return newly created practitioner
+     */
+    public void getPractitioner (String practIdentifier, GetPractitionerCallback callback) throws IOException, ParseException {
+        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Encounter?participant.identifier=" +
+                practIdentifier + "&_format=json";
         boolean finished = false;
-        PatientList patients = new PatientList(practitionerID);
+        PatientList patients = new PatientList(practIdentifier);
         HashSet<String> patientIds = new HashSet<>();
         Practitioner p;
 
@@ -47,7 +60,7 @@ public class GetPractitionerService {
 
                 // if doesn't have any encounter, return a practitioner with 0 patient
                     if (!json.has("entry")){
-                       p =  new Practitioner(practitionerID, patients);
+                       p =  new Practitioner(practIdentifier, patients);
                        if (callback != null){
                            callback.updateUI(p);
                        }
@@ -59,7 +72,8 @@ public class GetPractitionerService {
                         String patientId;
                         GetPatientService createPatient = new GetPatientService();
                         for (int i = 0; i < entries.length(); i++) {
-                            patientId = entries.getJSONObject(i).getJSONObject("resource").getJSONObject("subject").getString("reference");
+                            patientId = entries.getJSONObject(i).getJSONObject("resource").getJSONObject("subject")
+                                    .getString("reference");
                             if (!patientIds.contains(patientId)) {
                                 patientIds.add(patientId);
                                 Patient newPatient = createPatient.getPatient(patientId, null);
@@ -84,23 +98,9 @@ public class GetPractitionerService {
                 }
             }
 
-            p = new Practitioner(practitionerID, patients);
+            p = new Practitioner(practIdentifier, patients);
             if (callback != null){
                 callback.updateUI(p);
             }
-
     }
-//
-//    public void getPractitionerTest(String practitionerID, GetPractitionerCallback callback) throws IOException {
-//        PatientList patientList = new PatientList(practitionerID);
-//        patientList.add(new Patient("1", "a", "b"));
-//        patientList.add(new Patient("2", "c", "d"));
-//        patientList.add(new Patient("3", "e", "f"));
-//        if (callback != null){
-//            callback.updateUI(new Practitioner(practitionerID, patientList));
-//        }
-//
-//    }
-
-
 }

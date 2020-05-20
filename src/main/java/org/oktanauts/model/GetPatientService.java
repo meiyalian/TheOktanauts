@@ -18,6 +18,12 @@ import java.util.Date;
  * This class is for creating a patient object
  */
 public class GetPatientService {
+    /**
+     * Reads data from reader into string
+     *
+     * @param rd the reader of the string
+     * @return the string of the data from the reader
+     */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -27,6 +33,13 @@ public class GetPatientService {
         return sb.toString();
     }
 
+    /**
+     * Populates a patient from the data in the hapi fhir jpaserver
+     *
+     * @param patientId id of the patient in the database to be queried
+     * @param callback optional callback for after the patient is created
+     * @return newly created patient
+     */
     public Patient getPatient(String patientId, GetPatientCallback callback) throws IOException, ParseException {
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/" + patientId + "?_format=json";
 
@@ -40,13 +53,13 @@ public class GetPatientService {
             String surname = json.getJSONArray("name").getJSONObject(0)
                     .getString("family");
             JSONObject address = json.getJSONArray("address").getJSONObject(0);
-            Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(json.getString("birthDate"));
+            Date dateOfBirth = new SimpleDateFormat("yyyy-MM-dd").parse(json.getString("birthDate"));
             String gender = json.getString("gender");
             String city = address.getString("city");
             String state = address.getString("state");
             String country = address.getString("country");
 
-            Patient patient = new Patient(patientId, firstName, surname, birthday, gender, city, state, country);
+            Patient patient = new Patient(patientId, firstName, surname, dateOfBirth, gender, city, state, country);
             if (callback != null) {
                 callback.getPatientSuccess(patient);
             }

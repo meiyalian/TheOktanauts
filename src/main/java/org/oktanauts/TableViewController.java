@@ -15,7 +15,8 @@ import java.util.ResourceBundle;
  */
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
-    @FXML  private TableView<Patient> monitorTable;
+    @FXML
+    private TableView<Patient> monitorTable;
     private TableColumn<Patient, String> nameColumn = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Val");
     private TableColumn<Patient, String> timeColumn = new TableColumn<>("Time");
@@ -23,6 +24,12 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private GetMeasurementService getMeasurementService = new GetMeasurementService();
     private double averageCholesterol = 0;
 
+    /**
+     * Initialises the table for the view
+     *
+     * @param location the url location
+     * @param resources the resource bundle
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateView();
@@ -62,15 +69,30 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
-    public Patient selectedPatient(){
+    /**
+     * Gets the currently selection patient in the table
+     *
+     * @return the patient that is currently selected
+     */
+    public Patient getSelectedPatient(){
         return monitorTable.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Adds a patient to be monitored
+     *
+     * @param p the patient to be monitored
+     */
     public synchronized void addMonitoredPatient(Patient p){
         monitoredPatients.add(p);
         getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
     }
 
+    /**
+     * Removes a patient from being monitored
+     *
+     * @param p the patient to be removed
+     */
     public synchronized void removeMonitoredPatient(Patient p){
         int index = 0;
         boolean isFound = false;
@@ -87,17 +109,26 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
     }
 
+    /**
+     * Refreshes the monitored measurements of all of the patients currently being monitored
+     */
     public synchronized void refreshMeasurementsData()  {
       for(Patient p: monitoredPatients){
           getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
       }
     }
 
+    /**
+     * Updates the warnings highlightings of the table
+     */
     @Override
     public void updateView() {
         updateHighlight();
     }
 
+    /**
+     * Calculates the average measurement of the monitored patients and highlights any patients that are above it
+     */
     public void updateHighlight(){
         double sum = 0.0;
         int count = 0;

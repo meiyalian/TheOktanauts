@@ -9,5 +9,4 @@ import java.io.IOException;
 
 public interface GetPractitionerCallback {
     void updateUI(Practitioner p) throws IOException;
-    void getPractitionerFail(); // for implementing login function later
 }

@@ -13,6 +13,12 @@ import java.text.SimpleDateFormat;
  */
 public class GetMeasurementService {
 
+    /**
+     * Reads data from reader into string
+     *
+     * @param rd the reader of the string
+     * @return the string of the data from the reader
+     */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -23,49 +29,44 @@ public class GetMeasurementService {
     }
 
 
+    /**
+     * Updates the specified measurement of a patient
+     *
+     * @param p the patient to be updated
+     * @param code the code of the measurement to be updated
+     * @param callback optional callback upon completion of update
+     */
     public void updateMonitoredPatientMeasurement(Patient p, String code,  GetMeasurementCallback callback){
+        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
+                + "&code=" + code + "&_sort=-date&_format=json";
 
+        System.out.println(url);
+        try (InputStream is = new URL(url).openStream()) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String jsonText = readAll(rd);
+            JSONObject json = new JSONObject(jsonText);
 
-            String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
-                    + "&code=" + code + "&_sort=-date&_format=json";
+            if (json.has("entry")) {
+                JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                        .getJSONObject("valueQuantity");
+                Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
+                        .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                                .getString("issued")).getTime());
+                Float value = valueQuantity.getFloat("value");
+                String unit = valueQuantity.getString("unit");
+                String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
+                        .getJSONObject("code").getString("text");
 
-            System.out.println(url);
-            try (InputStream is = new URL(url).openStream()) {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                String jsonText = readAll(rd);
-                JSONObject json = new JSONObject(jsonText);
-
-                if (json.has("entry")){
-                    JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                            .getJSONObject("valueQuantity");
-
-                    Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
-                            .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                                    .getString("issued")).getTime());
-                    Float value = valueQuantity.getFloat("value");
-                    String unit = valueQuantity.getString("unit");
-                    String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                            .getJSONObject("code").getString("text");
-
-                    Measurement result = new Measurement(code, name, value, unit, dateTime, p);
-                    p.addMeasurement(code,result);
-                }
-                else{
-                    p.addMeasurement(code, null);
-                    System.out.println("patient" + p.getName() + " doesnt have this measurement");
-                }
-
-                if (callback != null) {
-                    callback.updateView();
-                }
+                Measurement result = new Measurement(code, name, value, unit, dateTime);
+                p.addMeasurement(result);
             }
-            catch (IOException | ParseException e) {
-                e.printStackTrace();
+
+            if (callback != null) {
+                callback.updateView();
             }
         }
-
-
-
-
-
+        catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
 }

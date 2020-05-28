@@ -20,7 +20,8 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private HashMap<String, Measurement> measurements;
+    private HashMap<Measurement.MeasurementType, Measurement> measurements;
+
 
     /**
      * Patient Constructor
@@ -159,21 +160,20 @@ public class Patient {
      * @param measurement the measurement to be added to the patient's cache
      */
     public void addMeasurement(Measurement measurement) {
-        measurements.put(measurement.getCode(), measurement);
+        measurements.put(measurement.getType(), measurement);
     }
 
     /**
      * Gets the specified measurement from the patient's case
      *
-     * @param code the LOINC code of the measurment to get
+     * @param measurementType the measurement to get
      * @return the desired measurement from the cache if it exists
      */
-    public Measurement getMeasurement(String code) {
-        if (!measurements.containsKey(code)) {
+    public Measurement getMeasurement(Measurement.MeasurementType measurementType) {
+        if (!measurements.containsKey(measurementType)) {
             return null;
         }
-        return measurements.get(code);
+        return measurements.get(measurementType);
     }
-
 
 }

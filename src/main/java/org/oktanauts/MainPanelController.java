@@ -10,7 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.layout.AnchorPane;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -72,6 +71,7 @@ public class MainPanelController implements Initializable {
             newWindow.setScene(detailPage);
             newWindow.setResizable(false);
             newWindow.show();
+
         }
     }
 
@@ -89,6 +89,7 @@ public class MainPanelController implements Initializable {
         allPatients.forEach(patient -> patient.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             if (isSelected) {
                 tableViewController.addMonitoredPatient(patient);
+
             }
             if (wasSelected && !isSelected) {
                 tableViewController.removeMonitoredPatient(patient);

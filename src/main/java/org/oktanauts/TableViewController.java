@@ -8,15 +8,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import org.oktanauts.model.*;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * This class is the controller class for the monitor table of the app
  */
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
-    @FXML
-    private TableView<Patient> monitorTable;
+    @FXML private TableView<Patient> monitorTable;
+    @FXML private ListView<GetMeasurementService.measurementName> selectView;
+    @FXML private Label patientToAdd;
+    @FXML private Button addToTable;
+
     private TableColumn<Patient, String> nameColumn = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> valColumn = new TableColumn<>("Total\nCholesterol");
     private TableColumn<Patient, String> CLtimeColumn = new TableColumn<>("Time");
@@ -27,6 +30,11 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private GetMeasurementService getMeasurementService = new GetMeasurementService();
     private double averageCholesterol = 0;
 
+    private ArrayList<Patient> patientQueue = new ArrayList<>();
+    private ArrayList<GetMeasurementService.measurementName> selectableMeasurements = new ArrayList<>();
+    private HashMap<GetMeasurementService.measurementName, ArrayList<Patient>> monitorManager = new HashMap<>();
+
+
     /**
      * Initialises the table for the view
      *
@@ -35,32 +43,39 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        updateView();
+//        updateView();
+
+        selectableMeasurements.add(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL);
+        selectableMeasurements.add(GetMeasurementService.measurementName.BLOOD_PRESSURE);
+        for (GetMeasurementService.measurementName m: selectableMeasurements) {
+            monitorManager.put(m, new ArrayList<>());
+        }
+        selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
         valColumn.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3")
+                        .getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)
                         .toString(): ""));
 
         CLtimeColumn.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement("2093-3")!= null? p.getValue().getMeasurement("2093-3")
+                        .getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)
                         .getTimestamp():""));
+
 
         monitorTable.setRowFactory(row -> new TableRow<>() {
             @Override
             public void updateItem(Patient item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty || item.getMeasurement("2093-3") == null) {
+                if (item == null || empty || item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL) == null) {
                     setStyle("");
-                } else if (item.getMeasurement("2093-3").getValue() > averageCholesterol) {
+                } else if (item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).getValue() > averageCholesterol) {
                     setStyle("-fx-background-color: #F08888;");
                 }
             }
         });
-
 
         nameColumn.setMinWidth(170);
         valColumn.setMinWidth(100);
@@ -90,9 +105,46 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      * @param p the patient to be monitored
      */
     public synchronized void addMonitoredPatient(Patient p){
-        monitoredPatients.add(p);
-        getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
+//        monitoredPatients.add(p);
+//        getMeasurementService.updateMonitoredPatientMeasurement(p, GetMeasurementService.measurementName.CHOLESTEROL_LEVEL, this, null);
+          patientQueue.add(0,p);
+          if(patientQueue.size() ==1){
+              patientToAdd.setText(p.getName());
+              initializingSelectMenu();
+          }
     }
+
+    private void initializingSelectMenu(){
+        for (GetMeasurementService.measurementName measurement: selectableMeasurements) {
+            selectView.getItems().add(measurement);
+        }
+    }
+
+    @FXML
+    public synchronized void addToTable(){
+        if(patientQueue.size() > 0){
+            Patient p = patientQueue.get(patientQueue.size()-1);
+            ObservableList<GetMeasurementService.measurementName> monitorItems = selectView.getSelectionModel().getSelectedItems();
+
+            monitoredPatients.add(p);
+            for (GetMeasurementService.measurementName m:monitorItems) {
+                getMeasurementService.updateMonitoredPatientMeasurement(p, m, this, null);
+                monitorManager.get(m).add(p);
+            }
+            updateView();
+            patientQueue.remove(patientQueue.size()-1);
+
+            selectView.getSelectionModel().clearSelection();
+            if (patientQueue.size() == 0){
+                selectView.getItems().clear();
+                patientToAdd.setText("");
+            }
+            else {
+                patientToAdd.setText(patientQueue.get(patientQueue.size()-1).getName());
+            }
+        }
+    }
+
 
     /**
      * Removes a patient from being monitored
@@ -100,28 +152,58 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      * @param p the patient to be removed
      */
     public synchronized void removeMonitoredPatient(Patient p){
-        int index = 0;
-        boolean isFound = false;
-        while (index < monitoredPatients.size()){
-            if (monitoredPatients.get(index).equals(p)){
-                isFound = true;
-                break;
+//        int index = 0;
+//        boolean isFound = false;
+//        while (index < monitoredPatients.size()){
+//            if (monitoredPatients.get(index).equals(p)){
+//                isFound = true;
+//                break;
+//            }
+//            index ++;
+//        }
+//        if (isFound) {
+//            monitoredPatients.remove(index);
+//            updateView();
+//        }
+        if (patientQueue.size()>0){
+            patientQueue.remove(p);
+            selectView.getSelectionModel().clearSelection();
+            if (patientQueue.size() ==0){
+                selectView.getItems().clear();
+                patientToAdd.setText("");
             }
-            index ++;
+            else{
+                patientToAdd.setText(patientQueue.get(patientQueue.size()-1).getName());
+            }
         }
-        if (isFound) {
-            monitoredPatients.remove(index);
-            updateView();
+        if (monitoredPatients.size() >0){
+            monitoredPatients.remove(p);
         }
+        for (ArrayList pList: monitorManager.values()){
+            pList.remove(p);
+        }
+
+        updateView();
     }
+
+
+
 
     /**
      * Refreshes the monitored measurements of all of the patients currently being monitored
      */
     public synchronized void refreshMeasurementsData()  {
-      for(Patient p: monitoredPatients){
-          getMeasurementService.updateMonitoredPatientMeasurement(p, "2093-3", this);
-      }
+
+    for (Map.Entry<GetMeasurementService.measurementName, ArrayList<Patient>> entry: monitorManager.entrySet()){
+        ArrayList<Patient> pList = entry.getValue();
+        GetMeasurementService.measurementName key = entry.getKey();
+        for (Patient p: pList) {
+            getMeasurementService.updateMonitoredPatientMeasurement(p, key, this ,null);
+        }
+    }
+//      for(Patient p: monitoredPatients){
+//          getMeasurementService.updateMonitoredPatientMeasurement(p, GetMeasurementService.measurementName.CHOLESTEROL_LEVEL, this ,null);
+//      }
     }
 
     /**
@@ -138,18 +220,22 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void updateHighlight(){
         double sum = 0.0;
         int count = 0;
-        for (Patient patient : monitoredPatients) {
-            Measurement m = patient.getMeasurement("2093-3");
+        for (Patient patient : monitorManager.get(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)) {
+            System.out.println("monitored cholesterol level patient name :" + patient.getName());
+            Measurement m = patient.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL);
             if (m != null){
                 sum += m.getValue();
                 count += 1;
             }
         }
 
+
         double average = 0.0;
         if (count > 0){
             average = sum / count;
         }
+
+        System.out.println("count: "+ count);
         System.out.println("average value: " + average);
 
         this.averageCholesterol = average;

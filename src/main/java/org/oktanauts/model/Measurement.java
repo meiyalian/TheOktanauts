@@ -6,24 +6,24 @@ import java.sql.Timestamp;
  */
 public class Measurement {
     private String code;
-    private String name;
+    private MeasurementType type;
     private double value;
     private String unit;
     private Timestamp timestamp;
-
+    public enum MeasurementType  {CHOLESTEROL_LEVEL, SYSTOLIC_BP, DIASTOLIC_BP}
 
     /**
      * Measurement Constructor
      *
      * @param code the LOINC code of the measurement
-     * @param name the name of the measurement
+     * @param type the name of the measurement
      * @param value the double value of the measurement
      * @param unit the unit that the measurement value is expressed in
      * @param timestamp the timestamp of when the measurement was taken
      */
-    public Measurement(String code, String name, double value, String unit, Timestamp timestamp) {
+    public Measurement(String code, MeasurementType type, double value, String unit, Timestamp timestamp) {
         this.code = code;
-        this.name = name;
+        this.type = type;
         this.value = value;
         this.unit = unit;
         this.timestamp = timestamp;
@@ -56,4 +56,8 @@ public class Measurement {
      * @return the concatenated string of the value and unit
      */
     public String toString() { return this.value + " " + this.unit; }
+
+    public MeasurementType getType(){
+        return type;
+    }
 }

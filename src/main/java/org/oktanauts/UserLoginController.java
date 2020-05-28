@@ -58,7 +58,7 @@ public class UserLoginController implements GetPractitionerCallback {
             Scene errorPage = new Scene(root);
             Stage newWindow = new Stage();
             newWindow.setScene(errorPage);
-            newWindow.setResizable(false);
+//            newWindow.setResizable(false);
             newWindow.show();
             return false;
         }

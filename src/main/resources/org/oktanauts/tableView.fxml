@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="398.0" prefWidth="489.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="704.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.oktanauts.TableViewController">
-   <TableView fx:id="monitorTable" layoutX="5.0" layoutY="1.0" prefHeight="398.0" prefWidth="480.0"/>
+   <TableView fx:id="monitorTable" layoutX="175.0" layoutY="25.0" prefHeight="313.0" prefWidth="753.0"/>
+   <Button layoutX="17.0" layoutY="134.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="145.0"
+           text="add to table"/>
+   <AnchorPane layoutX="11.0" layoutY="392.0" prefHeight="291.0" prefWidth="923.0"/>
+   <Label layoutX="15.0" layoutY="357.0" prefHeight="34.0" prefWidth="199.0" text="Blood Pressure Observation"
+          textAlignment="CENTER">
+      <font>
+         <Font size="14.0"/>
+      </font>
+   </Label>
+   <ListView layoutX="16.0" layoutY="41.0" prefHeight="80.0" prefWidth="145.0"/>
+   <ListView layoutX="13.0" layoutY="203.0" prefHeight="80.0" prefWidth="145.0"/>
+   <Button layoutX="13.0" layoutY="295.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="145.0"
+           text="CL Graphic Monitor"/>
+   <Label layoutX="16.0" layoutY="184.0" prefHeight="17.0" prefWidth="145.0" text="Monitoring Measurements"/>
+   <Button layoutX="186.0" layoutY="363.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="93.0"
+           text="Grahpic View">
+      <font>
+         <Font size="10.0"/>
+      </font>
+   </Button>
 </AnchorPane>

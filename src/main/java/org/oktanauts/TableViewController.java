@@ -17,6 +17,7 @@ import java.util.*;
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML private TableView<Patient> monitorTable;
     @FXML private ListView<GetMeasurementService.measurementName> selectView;
+    @FXML private ListView<GetMeasurementService.measurementName> modifyView;
     @FXML private Label patientToAdd;
     @FXML private Button addToTable;
 
@@ -32,7 +33,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     private ArrayList<Patient> patientQueue = new ArrayList<>();
     private ArrayList<GetMeasurementService.measurementName> selectableMeasurements = new ArrayList<>();
-    private HashMap<GetMeasurementService.measurementName, ArrayList<Patient>> monitorManager = new HashMap<>();
+    private HashMap<Patient, ArrayList<GetMeasurementService.measurementName>> monitorManager = new HashMap<>();
 
 
     /**
@@ -48,21 +49,21 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         selectableMeasurements.add(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL);
         selectableMeasurements.add(GetMeasurementService.measurementName.BLOOD_PRESSURE);
         for (GetMeasurementService.measurementName m: selectableMeasurements) {
-            monitorManager.put(m, new ArrayList<>());
+
         }
         selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         nameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
         valColumn.setCellValueFactory(p ->
-                new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)
-                        .toString(): ""));
+                new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)?
+                        (p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).toString(): "")
+                        : ""));
 
         CLtimeColumn.setCellValueFactory(p ->
-                new ReadOnlyObjectWrapper(p.getValue()
-                        .getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)
-                        .getTimestamp():""));
+                new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)?
+                        (p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL)!= null? p.getValue().getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).getTimestamp():""):
+                        ""));
 
 
         monitorTable.setRowFactory(row -> new TableRow<>() {
@@ -71,7 +72,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                 super.updateItem(item, empty);
                 if (item == null || empty || item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL) == null) {
                     setStyle("");
-                } else if (item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).getValue() > averageCholesterol) {
+                } else if (monitorManager.get(item).contains(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL) && item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).getValue() > averageCholesterol) {
                     setStyle("-fx-background-color: #F08888;");
                 }
             }
@@ -88,6 +89,34 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitorTable.getColumns().addAll(nameColumn, valColumn, CLtimeColumn, systolicBP, diastolicBP, BPtimeColumn);
         monitorTable.setPlaceholder(new Label("No patients being monitored"));
         monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        monitorTable.setOnMousePressed(e->{
+            if(e.isPrimaryButtonDown()){
+                modifyView.getItems().clear();
+                modifyView.getItems().addAll(selectableMeasurements);
+                ArrayList<GetMeasurementService.measurementName> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
+                for (GetMeasurementService.measurementName item: monitorItems) {
+                    modifyView.getSelectionModel().select(item);
+                }
+            }
+        });
+
+
+    }
+
+    @FXML
+    public synchronized void applyChange(){
+        ObservableList<GetMeasurementService.measurementName> monitorItems = modifyView.getSelectionModel().getSelectedItems();
+        Patient p = monitorTable.getSelectionModel().getSelectedItem();
+        ArrayList<GetMeasurementService.measurementName> monitoring = monitorManager.get(p);
+        monitoring.clear();
+        for (GetMeasurementService.measurementName item : monitorItems){
+            monitoring.add(item);
+            getMeasurementService.updateMonitoredPatientMeasurement(p, item, this, null);
+        }
+        System.out.println("apply ");
+        System.out.println(monitorManager.get(p));
+
+        updateView();
     }
 
     /**
@@ -127,9 +156,10 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             ObservableList<GetMeasurementService.measurementName> monitorItems = selectView.getSelectionModel().getSelectedItems();
 
             monitoredPatients.add(p);
+            monitorManager.put(p,new ArrayList<>());
             for (GetMeasurementService.measurementName m:monitorItems) {
                 getMeasurementService.updateMonitoredPatientMeasurement(p, m, this, null);
-                monitorManager.get(m).add(p);
+                monitorManager.get(p).add(m);
             }
             updateView();
             patientQueue.remove(patientQueue.size()-1);
@@ -179,9 +209,8 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         if (monitoredPatients.size() >0){
             monitoredPatients.remove(p);
         }
-        for (ArrayList pList: monitorManager.values()){
-            pList.remove(p);
-        }
+
+        monitorManager.remove(p);
 
         updateView();
     }
@@ -194,16 +223,19 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      */
     public synchronized void refreshMeasurementsData()  {
 
-    for (Map.Entry<GetMeasurementService.measurementName, ArrayList<Patient>> entry: monitorManager.entrySet()){
-        ArrayList<Patient> pList = entry.getValue();
-        GetMeasurementService.measurementName key = entry.getKey();
-        for (Patient p: pList) {
-            getMeasurementService.updateMonitoredPatientMeasurement(p, key, this ,null);
+        for (Map.Entry<Patient, ArrayList<GetMeasurementService.measurementName>> entry: monitorManager.entrySet()){
+            Patient p = entry.getKey();
+            ArrayList<GetMeasurementService.measurementName> monitorItems = entry.getValue();
+            for (GetMeasurementService.measurementName item: monitorItems){
+                getMeasurementService.updateMonitoredPatientMeasurement(p, item, this ,null);
+            }
+//        ArrayList<Patient> pList = entry.getValue();
+//        GetMeasurementService.measurementName key = entry.getKey();
+//        for (Patient p: pList) {
+//            getMeasurementService.updateMonitoredPatientMeasurement(p, key, this ,null);
+//        }
         }
-    }
-//      for(Patient p: monitoredPatients){
-//          getMeasurementService.updateMonitoredPatientMeasurement(p, GetMeasurementService.measurementName.CHOLESTEROL_LEVEL, this ,null);
-//      }
+
     }
 
     /**
@@ -220,14 +252,25 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void updateHighlight(){
         double sum = 0.0;
         int count = 0;
-        for (Patient patient : monitorManager.get(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)) {
-            System.out.println("monitored cholesterol level patient name :" + patient.getName());
-            Measurement m = patient.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL);
-            if (m != null){
+        for (Map.Entry<Patient, ArrayList<GetMeasurementService.measurementName>> entry: monitorManager.entrySet()){
+            Patient p = entry.getKey();
+            ArrayList<GetMeasurementService.measurementName> monitorItems = entry.getValue();
+            if (monitorItems.contains(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)){
+                Measurement m = p.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL);
+                if (m != null){
                 sum += m.getValue();
                 count += 1;
+                }
             }
         }
+//        for (Patient patient : monitorManager.get(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)) {
+//            System.out.println("monitored cholesterol level patient name :" + patient.getName());
+//            Measurement m = patient.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL);
+//            if (m != null){
+//                sum += m.getValue();
+//                count += 1;
+//            }
+//        }
 
 
         double average = 0.0;

@@ -41,7 +41,7 @@ public class GetPatientService {
      * @return newly created patient
      */
     public Patient getPatient(String patientId, GetPatientCallback callback) throws IOException, ParseException {
-        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/" + patientId + "?_format=json";
+        String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/" + patientId + "?_elements=subject,name,address,birthDate,gender&_format=json";
 
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));

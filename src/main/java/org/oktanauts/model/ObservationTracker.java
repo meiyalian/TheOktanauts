@@ -2,16 +2,16 @@ package org.oktanauts.model;
 
 import java.util.ArrayList;
 
-class MeasurementTracker {
-    private ArrayList<Measurement> records;
+class ObservationTracker {
+    private ArrayList<Observation> records;
     private Patient patient;
     private int maxNumOfRecords;
 
-    public MeasurementTracker(int numberOfRecords, Patient p, Measurement[] measurements) {
+    public ObservationTracker(int numberOfRecords, Patient p, Observation[] observations) {
         maxNumOfRecords = numberOfRecords;
         records = new ArrayList<>(maxNumOfRecords);
-        for(int i = 0; i<measurements.length && i<maxNumOfRecords ; i++){
-            records.add(measurements[i]);
+        for(int i = 0; i < observations.length && i<maxNumOfRecords ; i++){
+            records.add(observations[i]);
         }
         patient = p;
 
@@ -22,11 +22,11 @@ class MeasurementTracker {
         return patient;
     }
 
-    public void updateLatest(Measurement m){
+    public void updateLatest(Observation o){
         if (records.size() == maxNumOfRecords){
             records.remove(records.size()-1);
         }
-        records.add(0,m);
+        records.add(0, o);
     }
 
 

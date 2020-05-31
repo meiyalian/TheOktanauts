@@ -3,6 +3,7 @@ package org.oktanauts.model;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,7 +21,8 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private HashMap<Measurement.MeasurementType, Measurement> measurements;
+    private HashSet<String> monitoredMeasurements;
+    private HashMap<String, Observation> observations;
 
 
     /**
@@ -44,7 +46,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
-        this.measurements = new HashMap<>();
+        this.observations = new HashMap<>();
     }
 
     /**
@@ -154,26 +156,45 @@ public class Patient {
         return isMonitored.get();
     }
 
-    /**
-     * Adds a measurement to the patient's measurement cache
-     *
-     * @param measurement the measurement to be added to the patient's cache
-     */
-    public void addMeasurement(Measurement measurement) {
-        measurements.put(measurement.getType(), measurement);
+
+    public HashSet<String> getMonitoredMeasurements() {
+        return monitoredMeasurements;
     }
 
     /**
-     * Gets the specified measurement from the patient's case
+     * Adds a observation to the patient's observation cache
      *
-     * @param measurementType the measurement to get
-     * @return the desired measurement from the cache if it exists
+     * @param observation the observation to be added to the patient's cache
      */
-    public Measurement getMeasurement(Measurement.MeasurementType measurementType) {
-        if (!measurements.containsKey(measurementType)) {
+    public void addObservation(Observation observation) {
+        observations.put(observation.getCode(), observation);
+    }
+
+    /**
+     * Gets the specified observation from the patient's case
+     *
+     * @param observationCode the observation to get
+     * @return the desired observation from the cache if it exists
+     */
+    public Observation getObservation(String observationCode) {
+        if (!observations.containsKey(observationCode)) {
             return null;
         }
-        return measurements.get(measurementType);
+        return observations.get(observationCode);
+    }
+
+    public boolean hasObservation(String observationCode) {
+        return observations.containsKey(observationCode);
+    }
+
+    public boolean hasMeasurement(String observationCode, String measurementCode) {
+        if (observations.containsKey(observationCode)) {
+            if (observations.get(observationCode).hasMeasurement(measurementCode)) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
 }

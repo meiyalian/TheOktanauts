@@ -1,5 +1,6 @@
 package org.oktanauts.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -8,13 +9,11 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 /**
  * This class is for updating a patient's latest measurement
  */
 public class GetMeasurementService {
-
-    public enum measurementName {CHOLESTEROL_LEVEL, BLOOD_PRESSURE}
-
     /**
      * Reads data from reader into string
      *
@@ -30,28 +29,28 @@ public class GetMeasurementService {
         return sb.toString();
     }
 
+    private static Measurement extractMeasurement(JSONObject component) {
+        String compCode = component.getJSONObject("code").getJSONArray("coding")
+                .getJSONObject(0).getString("code");
+        String compName = component.getJSONObject("code").getString("text");
+        JSONObject valueQuantity = component.getJSONObject("valueQuantity");
+        float compValue = valueQuantity.getFloat("value");
+        String compUnit = valueQuantity.getString("unit");
+        return new Measurement(compCode, compName, compValue, compUnit);
+    }
 
     /**
-     * Updates the specified measurement of a patient
+     * Updates the specified observation of a patient
      *
      * @param p the patient to be updated
-     * @param measurementName type of measurement
+     * @param code the LOINC code of the observation
      * @param callback optional callback upon completion of update
      */
-    public void updateMonitoredPatientMeasurement(Patient p, measurementName measurementName, GetMeasurementCallback callback, MeasurementTracker measurementTracker){
-        String code="";
-        switch (measurementName){
-
-            case CHOLESTEROL_LEVEL:
-                code = "2093-3";
-                break;
-            case BLOOD_PRESSURE:
-                code = "55284-4";
-                break;
-        }
+    public void updatePatientMeasurement(Patient p, String code, GetMeasurementCallback callback,
+                                         ObservationTracker observationTracker){
 
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
-                + "&code=" + code + "&_sort=-date&_format=json";
+                + "&code=" + "&_sort=-_lastUpdated&_count=1&_format=json";
 
         System.out.println(url);
         try (InputStream is = new URL(url).openStream()) {
@@ -60,32 +59,27 @@ public class GetMeasurementService {
             JSONObject json = new JSONObject(jsonText);
 
             if (json.has("entry")) {
-                JSONObject valueQuantity = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                        .getJSONObject("valueQuantity");
+                JSONObject resource = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource");
+
+                String name = resource.getJSONObject("code").getString("text");
                 Timestamp dateTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'H:m:s.SX")
-                        .parse(json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-                                .getString("issued")).getTime());
+                        .parse(resource.getString("issued")).getTime());
 
-                switch (measurementName){
+                Observation observation = new Observation(code, name, dateTime);
 
-                    case BLOOD_PRESSURE:
-                        // add logic to query blood pressure, create 2 measurements SYSTOLIC_BP and DIASTOLIC_BP and add them to patient
-
-
-                        //update measurement tracker of the patient, for the [tracking blood pressure history] requirement
-//                        if (measurementTracker != null){
-//                             measurementTracker.updateLatest(systolic blood measurement);
-//                        }
-                       break;
-                    case CHOLESTEROL_LEVEL:
-                        float value = valueQuantity.getFloat("value");
-                        String unit = valueQuantity.getString("unit");
-//                        String name = json.getJSONArray("entry").getJSONObject(0).getJSONObject("resource")
-//                                .getJSONObject("code").getString("text");
-                        Measurement result = new Measurement(code, Measurement.MeasurementType.CHOLESTEROL_LEVEL, value, unit, dateTime);
-                        p.addMeasurement(result);
-                        break;
+                // single measurement
+                if (!resource.has("component")) {
+                    observation.addMeasurement(extractMeasurement(resource));
                 }
+                else {
+                    JSONArray component = resource.getJSONArray("component");
+
+                    for (int i = 0; i < component.length(); i++) {
+                        observation.addMeasurement(extractMeasurement(component.getJSONObject(i)));
+                    }
+                }
+
+                p.addObservation(observation);
             }
 
             if (callback != null) {
@@ -99,14 +93,14 @@ public class GetMeasurementService {
 
 
     // these are for the [tracking blood pressure history] requirement
-    public MeasurementTracker getNewMeasurementTracker(Patient p, measurementName measurementName, int numberOfRecords){
-        Measurement[] history = trackHistory(p,measurementName,numberOfRecords);
-        return new MeasurementTracker(numberOfRecords, p, history);
+    public ObservationTracker getNewObservationTracker(Patient p, String observationName, int numberOfRecords){
+        Observation[] history = trackHistory(p,observationName,numberOfRecords);
+        return new ObservationTracker(numberOfRecords, p, history);
     }
 
 
-    private Measurement[] trackHistory (Patient p, measurementName measurementName, int numberOfRecords){
-        Measurement[] history = new Measurement[numberOfRecords];
+    private Observation[] trackHistory (Patient p, String observationName, int numberOfRecords){
+        Observation[] history = new Observation[numberOfRecords];
         // add logic to create measurements and return a list of measurements
         //should be in the order of latest -> oldest
         return history;

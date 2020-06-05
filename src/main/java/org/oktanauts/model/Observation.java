@@ -23,6 +23,7 @@ public class Observation {
         this.code = code;
         this.type = type;
         this.timestamp = timestamp;
+        this.components = new HashMap<String, Measurement>();
     }
 
     /**

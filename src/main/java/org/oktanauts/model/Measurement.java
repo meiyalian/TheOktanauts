@@ -19,6 +19,7 @@ public class Measurement {
      * @param unit the unit that the measurement value is expressed in
      */
     public Measurement(String code, String type, double value, String unit) {
+        System.out.println(code + ", " + type + ", " + String.valueOf(value) + ", " + unit);
         this.code = code;
         this.type = type;
         this.value = value;

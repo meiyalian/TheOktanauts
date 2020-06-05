@@ -37,6 +37,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private HashMap<Patient, ArrayList<String>> monitorManager = new HashMap<>();
 
     private static String CHOLESTEROL_LEVEL = "2093-3";
+
     private static String BLOOD_PRESSURE = "55284-4";
     private static String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
     private static String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
@@ -54,7 +55,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
         selectableObservations.add(CHOLESTEROL_LEVEL);
         selectableObservations.add(BLOOD_PRESSURE);
-
 
         selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -182,6 +182,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             monitoredPatients.add(patient);
             monitorManager.put(patient, new ArrayList<>());
             for (String observation : monitorItems) {
+                // breaks
                 getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
                 monitorManager.get(patient).add(observation);
             }

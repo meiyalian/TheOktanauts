@@ -50,7 +50,7 @@ public class GetMeasurementService {
                                          ObservationTracker observationTracker){
 
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
-                + "&code=" + "&_sort=-_lastUpdated&_count=1&_format=json";
+                + "&code=" + code + "&_sort=-_lastUpdated&_count=1&_format=json";
 
         System.out.println(url);
         try (InputStream is = new URL(url).openStream()) {
@@ -69,13 +69,15 @@ public class GetMeasurementService {
 
                 // single measurement
                 if (!resource.has("component")) {
-                    observation.addMeasurement(extractMeasurement(resource));
+                    Measurement newMeasurement = extractMeasurement(resource);
+                    observation.addMeasurement(newMeasurement);
                 }
                 else {
                     JSONArray component = resource.getJSONArray("component");
 
                     for (int i = 0; i < component.length(); i++) {
-                        observation.addMeasurement(extractMeasurement(component.getJSONObject(i)));
+                        Measurement newMeasurement = extractMeasurement(component.getJSONObject(i));
+                        observation.addMeasurement(newMeasurement);
                     }
                 }
 

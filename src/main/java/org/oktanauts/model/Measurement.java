@@ -1,5 +1,8 @@
 package org.oktanauts.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Timestamp;
 /**
  * This class is the measurement model class

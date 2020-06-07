@@ -1,5 +1,8 @@
 package org.oktanauts.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 
@@ -11,6 +14,7 @@ public class Observation {
     private String type;
     private Timestamp timestamp;
     public HashMap<String, Measurement> components;
+    private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
 
     /**
      * Measurement Constructor
@@ -68,6 +72,29 @@ public class Observation {
     }
 
     public String getType(){
+        return type;
+    }
+
+    /**
+     * Gets the boolean property of whether the patient is being currently monitored by the program
+     *
+     * @return a boolean property of whether the patient is currently being monitored
+     */
+    public BooleanProperty selectedProperty() {
+        return isMonitored;
+    }
+
+    /**
+     * Gets whether the patient is currently being monitored by the system
+     *
+     * @return the boolean value of whether the patient is being currently monitored by the system
+     */
+    public boolean isSelected() {
+        return isMonitored.get();
+    }
+
+    @Override
+    public String toString() {
         return type;
     }
 }

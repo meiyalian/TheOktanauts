@@ -1,14 +1,23 @@
 package org.oktanauts;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.util.StringConverter;
 import org.oktanauts.model.*;
 import java.net.URL;
 import java.util.*;
+import java.util.Iterator;
+import java.util.concurrent.BlockingDeque;
 
 /**
  * This class is the controller class for the monitor table of the app
@@ -16,10 +25,7 @@ import java.util.*;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML private TableView<Patient> monitorTable;
-    @FXML private ListView<String> selectView;
     @FXML private ListView<String> modifyView;
-    @FXML private Label patientToAdd;
-    @FXML private Button addToTable;
 
     private TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> cholCol = new TableColumn<>("Total\nCholesterol");
@@ -33,14 +39,15 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private double averageCholesterol = 0;
 
     private ArrayList<Patient> patientQueue = new ArrayList<>();
-    private ArrayList<String> selectableObservations = new ArrayList<>();
+    private ArrayList<Observation> currentObservations = new ArrayList<>();
     private HashMap<Patient, ArrayList<String>> monitorManager = new HashMap<>();
 
-    private static String CHOLESTEROL_LEVEL = "2093-3";
-
-    private static String BLOOD_PRESSURE = "55284-4";
-    private static String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
-    private static String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
+    private static final Observation CL_OBSERVATION = new Observation("2093-3", "TOTAL CHOLESTEROL", null);
+    private static final String CHOLESTEROL_LEVEL = "2093-3";
+    private static final Observation BP_OBSERVATION = new Observation("55284-4", "BLOOD PRESSURE", null);
+    private static final String BLOOD_PRESSURE = "55284-4";
+    private static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
+    private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
 
 
     /**
@@ -51,12 +58,10 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        updateView();
+        currentObservations.add(CL_OBSERVATION);
+        currentObservations.add(BP_OBSERVATION);
 
-        selectableObservations.add(CHOLESTEROL_LEVEL);
-        selectableObservations.add(BLOOD_PRESSURE);
-
-        selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         nameCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
@@ -64,29 +69,29 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(CHOLESTEROL_LEVEL) ?
                         (p.getValue().hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL) ?
                                 (p.getValue().getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL)
-                                        .toString()) : "-") : "-"));
+                                        .toString()) : "N/A") : "-"));
 
         cholTimeCol.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(CHOLESTEROL_LEVEL) ?
                         (p.getValue().hasObservation(CHOLESTEROL_LEVEL) ?
-                                p.getValue().getObservation(CHOLESTEROL_LEVEL).getTimestamp() : "-") : "-"));
+                                p.getValue().getObservation(CHOLESTEROL_LEVEL).getTimestamp() : "N/A") : "-"));
 
         bpDiastolicCol.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(BLOOD_PRESSURE) ?
                         (p.getValue().hasMeasurement(BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE) ?
                                 (p.getValue().getObservation(BLOOD_PRESSURE).getMeasurement(DIASTOLIC_BLOOD_PRESSURE)
-                                        .toString()) : "-") : "-"));
+                                        .toString()) : "N/A") : "-"));
 
         bpSystolicCol.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(BLOOD_PRESSURE) ?
                         (p.getValue().hasMeasurement(BLOOD_PRESSURE, SYSTOLIC_BLOOD_PRESSURE) ?
                                 (p.getValue().getObservation(BLOOD_PRESSURE).getMeasurement(SYSTOLIC_BLOOD_PRESSURE)
-                                        .toString()) : "-") : "-"));
+                                        .toString()) : "N/A") : "-"));
 
         bpTimeCol.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(BLOOD_PRESSURE) ?
                         (p.getValue().hasObservation(BLOOD_PRESSURE) ?
-                                p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "-") : "-"));
+                                p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "N/A") : "-"));
 
 
         // Needs to be updated to highlight cells instead of rows
@@ -113,14 +118,101 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitorTable.getColumns().addAll(nameCol, cholCol, cholTimeCol, bpSystolicCol, bpDiastolicCol, bpTimeCol);
         monitorTable.setPlaceholder(new Label("No patients being monitored"));
         monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+//        modifyView.setCellFactory(CheckBoxListCell.forListView(item -> {
+//            return item.selectedProperty();
+//        }));
+
+
+
+        //set listener to checkbox cell
+//        ObservableList<Observation> allObservations = FXCollections.observableArrayList(currentObservations);
+//        allObservations.forEach(observation -> observation.selectedProperty()
+//                .addListener((observableValue, wasSelected, isSelected) -> {
+//            if (isSelected) {
+//                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
+//
+//            }
+//            if (wasSelected && !isSelected) {
+//                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
+//            }
+//        }));
+
+        bpTimeCol.setCellValueFactory(p ->
+                new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(BLOOD_PRESSURE) ?
+                        (p.getValue().hasObservation(BLOOD_PRESSURE) ?
+                                p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "N/A") : "-"));
+
+
+        // ArrayList<String> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
+        // set monitored measurements list
         monitorTable.setOnMousePressed(e -> {
-            if(e.isPrimaryButtonDown()) {
+            if (e.isPrimaryButtonDown()) {
                 modifyView.getItems().clear();
-                modifyView.getItems().addAll(selectableObservations);
-                ArrayList<String> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
-                for (String item : monitorItems) {
-                    modifyView.getSelectionModel().select(item);
-                }
+
+
+                //set listener to checkbox cell
+                ObservableList<Observation> allObservations = FXCollections.observableArrayList(currentObservations);
+
+                allObservations.forEach(observation -> {
+                    modifyView.getItems().add(observation.getType());
+                });
+
+//                // initialize the list view
+//                modifyView.setCellFactory(CheckBoxListCell.forListView(Observation::selectedProperty, new StringConverter<Observation>() {
+//                    @Override
+//                    public String toString(Observation observation) {
+//                        return observation.toString();
+//                    }
+//
+//                    @Override
+//                    public Observation fromString(String s) {
+//                        return null;
+//                    }
+//                }));
+                allObservations.forEach(observation -> {
+                    observation.selectedProperty()
+                        .addListener((observableValue, wasSelected, isSelected) -> {
+                            if (isSelected) {
+                                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
+
+                            }
+                            if (wasSelected && !isSelected) {
+                                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
+                            }
+
+                            updateView();
+                        });
+                });
+
+                // initialize the list view
+//                patientListView.getItems().addAll(allPatients);
+//                patientListView.setCellFactory(CheckBoxListCell.forListView(Patient::selectedProperty, new StringConverter<Patient>() {
+//                    @Override
+//                    public String toString(Patient patient) {
+//                        return patient.getName();
+//                    }
+//
+//                    @Override
+//                    public Patient fromString(String s) {
+//                        return null;
+//                    }
+//                }));
+
+//                ArrayList<String> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
+//                for (String item : monitorItems) {
+//                    switch (item) {
+//                        case CHOLESTEROL_LEVEL:
+//                            modifyView.getSelectionModel().select("TOTAL CHOLESTEROL");
+//                            break;
+//                        case BLOOD_PRESSURE:
+//                            modifyView.getSelectionModel().select("BLOOD PRESSURE");
+//                            break;
+//                        default:
+//                            modifyView.getSelectionModel().select("N/A");
+//                             break;
+//                    }
+//                }
             }
         });
 
@@ -155,83 +247,35 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     /**
      * Adds a patient to be monitored
      *
-     * @param p the patient to be monitored
+     * @param patient the patient to be monitored
      */
-    public synchronized void addMonitoredPatient(Patient p) {
+    public synchronized void addMonitoredPatient(Patient patient) {
 //        monitoredPatients.add(p);
-//        getMeasurementService.updateMonitoredPatientMeasurement(p, GetMeasurementService.measurementName.CHOLESTEROL_LEVEL, this, null);
-          patientQueue.add(0, p);
-          if (patientQueue.size() == 1) {
-              patientToAdd.setText(p.getName());
-              initializingSelectMenu();
-          }
-    }
+//        getMeasurementService.updatePatientMeasurement(p, CHOLESTEROL_LEVEL, this, null);
+//        getMeasurementService.updatePatientMeasurement(p, BLOOD_PRESSURE, this, null);
 
-    private void initializingSelectMenu() {
-        for (String observation : selectableObservations) {
-            selectView.getItems().add(observation);
+        ArrayList<String> monitorItems = new ArrayList<>();
+        monitorItems.add(CHOLESTEROL_LEVEL);
+        monitorItems.add(BLOOD_PRESSURE);
+
+        monitoredPatients.add(patient);
+        monitorManager.put(patient, monitorItems);
+
+        for (String observation : monitorItems) {
+            getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
+            monitorManager.get(patient).add(observation);
         }
+
+        updateView();
     }
-
-    @FXML
-    public synchronized void addToTable() {
-        if (patientQueue.size() > 0) {
-            Patient patient = patientQueue.get(patientQueue.size() - 1);
-            ObservableList<String> monitorItems = selectView.getSelectionModel().getSelectedItems();
-
-            monitoredPatients.add(patient);
-            monitorManager.put(patient, new ArrayList<>());
-            for (String observation : monitorItems) {
-                // breaks
-                getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
-                monitorManager.get(patient).add(observation);
-            }
-            updateView();
-            patientQueue.remove(patientQueue.size() - 1);
-
-            selectView.getSelectionModel().clearSelection();
-            if (patientQueue.size() == 0) {
-                selectView.getItems().clear();
-                patientToAdd.setText("");
-            }
-            else {
-                patientToAdd.setText(patientQueue.get(patientQueue.size() - 1).getName());
-            }
-        }
-    }
-
 
     /**
      * Removes a patient from being monitored
      *
-     * @param p the patient to be removed
+     * @param patient the patient to be removed
      */
     public synchronized void removeMonitoredPatient(Patient patient) {
-//        int index = 0;
-//        boolean isFound = false;
-//        while (index < monitoredPatients.size()){
-//            if (monitoredPatients.get(index).equals(p)){
-//                isFound = true;
-//                break;
-//            }
-//            index ++;
-//        }
-//        if (isFound) {
-//            monitoredPatients.remove(index);
-//            updateView();
-//        }
-        if (patientQueue.size() > 0) {
-            patientQueue.remove(patient);
-            selectView.getSelectionModel().clearSelection();
-            if (patientQueue.size() == 0) {
-                selectView.getItems().clear();
-                patientToAdd.setText("");
-            }
-            else {
-                patientToAdd.setText(patientQueue.get(patientQueue.size() - 1).getName());
-            }
-        }
-        if (monitoredPatients.size() > 0 ) {
+        if (monitoredPatients.size() > 0) {
             monitoredPatients.remove(patient);
         }
 

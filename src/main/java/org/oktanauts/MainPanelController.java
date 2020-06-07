@@ -71,7 +71,6 @@ public class MainPanelController implements Initializable {
             newWindow.setScene(detailPage);
             newWindow.setResizable(false);
             newWindow.show();
-
         }
     }
 

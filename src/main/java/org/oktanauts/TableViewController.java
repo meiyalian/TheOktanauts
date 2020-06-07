@@ -263,7 +263,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
         for (String observation : monitorItems) {
             getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
-            monitorManager.get(patient).add(observation);
         }
 
         updateView();
@@ -321,10 +320,12 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             Patient patient = entry.getKey();
             ArrayList<String> monitorItems = entry.getValue();
             if (monitorItems.contains(CHOLESTEROL_LEVEL)) {
-                Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
-                if (measurement != null) {
-                    sum += measurement.getValue();
-                    count += 1;
+                if (patient.hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL)) {
+                    Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
+                    if (measurement != null) {
+                        sum += measurement.getValue();
+                        count += 1;
+                    }
                 }
             }
         }

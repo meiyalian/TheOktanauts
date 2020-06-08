@@ -158,20 +158,6 @@ public class MainPanelController implements Initializable {
             }
         }, 0, refreshSpinner.getValue() * 1000);
 
-        // add listener to monitored patient list, whenever a new patient is added, notify table view controller
-//        monitoredPatient.addListener(new ListChangeListener<Patient>() {
-//            @Override
-//            public void onChanged(Change<? extends Patient> change) {
-//                while (change.next()) {
-//                    if (change.wasAdded()) {
-//                        tableViewController.addMonitoredPatient(change.getAddedSubList().get(0));
-//                    }
-//                    else if (change.wasRemoved()) {
-//                        tableViewController.removeMonitoredPatient(change.getRemoved().get(0));
-//                    }
-//                }
-//            }
-//        });
     }
 
 }

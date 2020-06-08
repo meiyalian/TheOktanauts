@@ -9,11 +9,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.util.StringConverter;
+import javafx.stage.Stage;
 import org.oktanauts.model.*;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.Iterator;
@@ -48,6 +54,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private static final String BLOOD_PRESSURE = "55284-4";
     private static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
     private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
+
+    private GraphicalCLController graphicalCLController;
+
 
 
     /**
@@ -235,6 +244,40 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         updateView();
     }
 
+
+    @FXML
+    public synchronized void CLGraphWindow() throws IOException {
+
+//        ArrayList<Patient> patients = new ArrayList<>();
+
+
+        ObservableList<Patient> patients = FXCollections.observableArrayList();
+        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()){
+            Patient p = entry.getKey();
+            ArrayList<String> list = entry.getValue();
+            for(String val : list) {
+                if (val.equals(CHOLESTEROL_LEVEL)) {
+                    patients.add(p);
+                }
+            }
+        }
+
+        System.out.println("number :" + patients.size());
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(App.class.getResource("/org/oktanauts/graphicalCholesterol.fxml"));
+        Parent root = loader.load();
+        graphicalCLController = loader.getController();
+        graphicalCLController.initData(patients);
+        Scene graphPage = new Scene(root);
+        Stage newWindow = new Stage();
+        newWindow.setScene(graphPage);
+        newWindow.setResizable(false);
+        newWindow.show();
+
+    }
+
+
     /**
      * Gets the currently selection patient in the table
      *
@@ -265,6 +308,10 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
         }
 
+        // if the graph view is opened, update the graph view
+        if(graphicalCLController != null){
+            graphicalCLController.getMonitorList().add(patient);
+        }
         updateView();
     }
 
@@ -279,6 +326,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
 
         monitorManager.remove(patient);
+        if(graphicalCLController != null){
+            graphicalCLController.getMonitorList().remove(patient);
+        }
 
         updateView();
     }

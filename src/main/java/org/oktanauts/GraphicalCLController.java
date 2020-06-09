@@ -1,5 +1,7 @@
 package org.oktanauts;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,16 +23,17 @@ import java.util.ResourceBundle;
 public class GraphicalCLController {
 
     @FXML
-    private CategoryAxis x;
+    private CategoryAxis xAxis;
 
     @FXML
     private NumberAxis y;
 
     @FXML
-    private BarChart<?, ?> graph;
+    private BarChart<String, Double> graph;
 
     private ObservableList<Patient> monitoredPatients;
     private XYChart.Series dataSeries = new XYChart.Series();
+
     private static String CHOLESTEROL_LEVEL = "2093-3";
 
     public ObservableList<Patient> getMonitorList(){
@@ -40,17 +43,16 @@ public class GraphicalCLController {
 
     public void initData(ObservableList<Patient> patients){
         this.monitoredPatients = patients;
-        for(Patient p : monitoredPatients){
-            Observation observation = p.getObservation(CHOLESTEROL_LEVEL);
-            if (observation != null){
-                Measurement m = observation.getMeasurement(CHOLESTEROL_LEVEL);
-                if (m != null){
-                    dataSeries.getData().add(new XYChart.Data<String, Double>(p.getName(),m.getValue()));
-                }
+//        xAxis = (CategoryAxis) graph.getXAxis();
 
-            }
-        }
-        graph.getData().add(dataSeries);
+        updateView();
+//        graph.setPrefWidth(1000);
+//        setMaxBarWidth(40, 10);
+//
+//        graph.widthProperty().addListener((obs,b,b1)->{
+//            Platform.runLater(()->setMaxBarWidth(40, 10));
+//        });
+
 
         // add listener to the list in order to update the graph when the monitored patients change
         monitoredPatients.addListener((ListChangeListener<Patient> )change ->{
@@ -62,6 +64,11 @@ public class GraphicalCLController {
                         Measurement m = observation.getMeasurement(CHOLESTEROL_LEVEL);
                         if (m != null){
                             dataSeries.getData().add(new XYChart.Data<String, Double>(p.getName(),m.getValue()));
+//                            graph.setPrefWidth(graph.getData().size()*5);
+                            graph.setMaxWidth(graph.getWidth() + 100);
+//                            graph.setBarGap(10);
+
+
                         }
                     }
 
@@ -73,6 +80,9 @@ public class GraphicalCLController {
                     while (index < data.size()){
                         if (data.get(index).getXValue().equals(patientName)){
                             dataSeries.getData().remove(index);
+//                            graph.setPrefWidth(graph.getData().size()*5);
+//                            graph.setMaxWidth(graph.getWidth() + 100);
+//                            graph.setBarGap(10);
                             break;
                         }
                         index ++;
@@ -82,6 +92,53 @@ public class GraphicalCLController {
             }
         });
     }
+
+    public void updateView(){
+        //update data of the graph
+//        graph.getData().clear();
+        graph.setData(FXCollections.observableArrayList());
+        XYChart.Series newData = new XYChart.Series();
+        this.dataSeries = newData;
+
+        for(Patient p : monitoredPatients){
+            Observation observation = p.getObservation(CHOLESTEROL_LEVEL);
+            if (observation != null){
+                Measurement m = observation.getMeasurement(CHOLESTEROL_LEVEL);
+                if (m != null){
+                    newData.getData().add(new XYChart.Data<String, Double>(p.getName(),m.getValue()));
+                }
+
+            }
+        }
+
+
+        graph.getData().add(newData);
+//        graph.lookupAll(".default-color0.chart-bar").forEach(n -> n.setStyle("-fx-bar-fill: blue;"));
+//        graph.setBarGap(5);
+//
+    }
+
+//    private void setMaxBarWidth(double maxBarWidth, double minCategoryGap){
+//        double barWidth=0;
+//        do{
+//            double catSpace = xAxis.getCategorySpacing();
+//            double avilableBarSpace = catSpace - (graph.getCategoryGap() + graph.getBarGap());
+//            barWidth = (avilableBarSpace / graph.getData().size()) - graph.getBarGap();
+//            if (barWidth >maxBarWidth){
+//                avilableBarSpace=(maxBarWidth + graph.getBarGap())* graph.getData().size();
+//                graph.setCategoryGap(catSpace-avilableBarSpace-graph.getBarGap());
+//            }
+//        } while(barWidth>maxBarWidth);
+//
+//        do{
+//            double catSpace = xAxis.getCategorySpacing();
+//            double avilableBarSpace = catSpace - (minCategoryGap + graph.getBarGap());
+//            barWidth = Math.min(maxBarWidth, (avilableBarSpace / graph.getData().size()) - graph.getBarGap());
+//            avilableBarSpace=(barWidth + graph.getBarGap())* graph.getData().size();
+//            graph.setCategoryGap(catSpace-avilableBarSpace-graph.getBarGap());
+//        } while(barWidth < maxBarWidth && graph.getCategoryGap()>minCategoryGap);
+//    }
+//
 
 }
 

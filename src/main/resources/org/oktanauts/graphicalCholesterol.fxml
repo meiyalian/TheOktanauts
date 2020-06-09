@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.GraphicalCLController">
-   <children>
-      <BarChart fx:id="graph" layoutX="9.0" layoutY="15.0" prefHeight="371.0" prefWidth="583.0" title="Cholesterol Level Monitor Graph">
-        <xAxis>
-          <CategoryAxis label="Patient" side="BOTTOM" fx:id="x" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis fx:id="y" label="Cholesterol Level" side="LEFT" />
-        </yAxis>
-      </BarChart>
-   </children>
+<AnchorPane prefHeight="659.0" prefWidth="974.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.oktanauts.GraphicalCLController">
+    <ScrollPane prefHeight="659.0" prefWidth="974.0">
+        <content>
+          <BarChart fx:id="graph" prefHeight="640.0" prefWidth="975.0" title="Cholesterol Level Monitor Graph">
+              <xAxis>
+                  <CategoryAxis label="Patient" side="BOTTOM" fx:id="x"/>
+              </xAxis>
+              <yAxis>
+                  <NumberAxis fx:id="y" label="Cholesterol Level" side="LEFT"/>
+              </yAxis>
+          </BarChart>
+        </content>
+    </ScrollPane>
 </AnchorPane>

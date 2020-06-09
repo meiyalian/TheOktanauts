@@ -1,5 +1,6 @@
 package org.oktanauts;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -163,9 +164,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                 //set listener to checkbox cell
                 ObservableList<Observation> allObservations = FXCollections.observableArrayList(currentObservations);
 
-                allObservations.forEach(observation -> {
-                    modifyView.getItems().add(observation.getType());
-                });
+                allObservations.forEach(observation -> modifyView.getItems().add(observation.getType()));
 
 //                // initialize the list view
 //                modifyView.setCellFactory(CheckBoxListCell.forListView(Observation::selectedProperty, new StringConverter<Observation>() {
@@ -179,20 +178,18 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 //                        return null;
 //                    }
 //                }));
-                allObservations.forEach(observation -> {
-                    observation.selectedProperty()
-                        .addListener((observableValue, wasSelected, isSelected) -> {
-                            if (isSelected) {
-                                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
+                allObservations.forEach(observation -> observation.selectedProperty()
+                    .addListener((observableValue, wasSelected, isSelected) -> {
+                        if (isSelected) {
+                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
 
-                            }
-                            if (wasSelected && !isSelected) {
-                                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
-                            }
+                        }
+                        if (wasSelected && !isSelected) {
+                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
+                        }
 
-                            updateView();
-                        });
-                });
+                        updateView();
+                    }));
 
                 // initialize the list view
 //                patientListView.getItems().addAll(allPatients);
@@ -357,7 +354,12 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
      */
     @Override
     public void updateView() {
+        monitorTable.refresh();
         updateHighlight();
+        if(graphicalCLController != null){
+            Platform.runLater(() -> graphicalCLController.updateView());
+
+        }
     }
 
     /**

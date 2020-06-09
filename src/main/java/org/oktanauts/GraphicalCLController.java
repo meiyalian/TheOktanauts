@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static org.oktanauts.model.GetMeasurementService.CHOLESTEROL_LEVEL;
+
 public class GraphicalCLController {
 
     @FXML
@@ -34,7 +36,7 @@ public class GraphicalCLController {
     private ObservableList<Patient> monitoredPatients;
     private XYChart.Series dataSeries = new XYChart.Series();
 
-    private static String CHOLESTEROL_LEVEL = "2093-3";
+
 
     public ObservableList<Patient> getMonitorList(){
         return monitoredPatients;

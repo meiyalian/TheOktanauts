@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import static org.oktanauts.model.GetMeasurementService.*;
+
 
 /**
  * This class is the controller class for the monitor table of the app
@@ -48,11 +50,11 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private HashMap<Patient, ArrayList<String>> monitorManager = new HashMap<>();
 
     private static final Observation CL_OBSERVATION = new Observation("2093-3", "TOTAL CHOLESTEROL", null);
-    private static final String CHOLESTEROL_LEVEL = "2093-3";
+//    private static final String CHOLESTEROL_LEVEL = "2093-3";
     private static final Observation BP_OBSERVATION = new Observation("55284-4", "BLOOD PRESSURE", null);
-    private static final String BLOOD_PRESSURE = "55284-4";
-    private static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
-    private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
+//    private static final String BLOOD_PRESSURE = "55284-4";
+//    private static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
+//    private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
 
     private GraphicalCLController graphicalCLController;
     private BPTrackingPageController bpTrackingPageController;

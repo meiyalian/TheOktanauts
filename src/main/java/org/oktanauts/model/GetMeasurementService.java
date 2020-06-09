@@ -14,6 +14,14 @@ import java.text.SimpleDateFormat;
  * This class is for updating a patient's latest measurement
  */
 public class GetMeasurementService {
+
+    public static final String CHOLESTEROL_LEVEL = "2093-3";
+    public static final String BLOOD_PRESSURE = "55284-4";
+    public static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
+    public static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
+
+
+
     /**
      * Reads data from reader into string
      *

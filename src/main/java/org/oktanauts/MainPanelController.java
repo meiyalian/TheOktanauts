@@ -38,6 +38,9 @@ public class MainPanelController implements Initializable {
     @FXML Spinner<Integer> refreshSpinner;
     @FXML Button backToLogin;
     @FXML Button viewDetail;
+    @FXML ComboBox<Integer> xCombo;
+    @FXML ComboBox<Integer> yCombo;
+
 
     /**
      * Resets the current stage and goes back to the login view
@@ -73,6 +76,19 @@ public class MainPanelController implements Initializable {
             newWindow.show();
         }
     }
+
+    /**
+     * set x and y value
+     *
+     * @param e the action event
+     */
+    @FXML
+    private void updateXY(ActionEvent e)  {
+        int xVal = xCombo.getValue()!=null? xCombo.getValue(): 200;
+        int yVal = yCombo.getValue()!=null? yCombo.getValue(): 120;
+                tableViewController.setXYVal(xVal,yVal);
+    }
+
 
     /**
      * Initialises the patient data of the practitioner for the view
@@ -136,6 +152,15 @@ public class MainPanelController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // initialize the combo box of x and y value
+        for(int i = 80; i<=200; i++){
+            if(i<=160){
+                yCombo.getItems().add(i);
+            }
+            if(i>=120){
+                xCombo.getItems().add(i);
+            }
+        }
         //load table view
         FXMLLoader tableLoader = new FXMLLoader();
         tableLoader.setLocation(App.class.getResource("/org/oktanauts/tableView.fxml"));

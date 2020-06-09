@@ -28,7 +28,14 @@ class ObservationTracker {
         }
         records.add(0, o);
     }
-
+//
+//    @Override
+//    public String toString(){
+//        String retString = patient.getName();
+//        for (Measurement record: records ) {
+//            retString += " " + record.getValue()
+//        }
+//    }
 
 
 }

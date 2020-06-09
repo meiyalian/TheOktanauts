@@ -4,7 +4,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is the measurement model class
@@ -95,6 +97,11 @@ public class Observation {
 
     @Override
     public String toString() {
-        return type;
+        StringBuilder retString = new StringBuilder();
+        for (Map.Entry<String, Measurement> entry : components.entrySet()) {
+            retString.append(entry.getValue().toString());
+        }
+        return retString.toString();
     }
+
 }

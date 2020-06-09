@@ -1,9 +1,6 @@
 package org.oktanauts.model;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 
-import java.sql.Timestamp;
 /**
  * This class is the measurement model class
  */
@@ -22,11 +19,12 @@ public class Measurement {
      * @param unit the unit that the measurement value is expressed in
      */
     public Measurement(String code, String type, double value, String unit) {
-        System.out.println(code + ", " + type + ", " + String.valueOf(value) + ", " + unit);
+        System.out.println(code + ", " + type + ", " + value + ", " + unit);
         this.code = code;
         this.type = type;
         this.value = value;
         this.unit = unit;
+
     }
 
     /**

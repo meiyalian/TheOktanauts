@@ -29,7 +29,7 @@ public class GetMeasurementService {
         return sb.toString();
     }
 
-    private static Measurement extractMeasurement(JSONObject component) {
+    private static Measurement extractMeasurement(JSONObject component) throws ParseException {
         String compCode = component.getJSONObject("code").getJSONArray("coding")
                 .getJSONObject(0).getString("code");
         String compName = component.getJSONObject("code").getString("text");
@@ -46,13 +46,14 @@ public class GetMeasurementService {
      * @param code the LOINC code of the observation
      * @param callback optional callback upon completion of update
      */
-    public void updatePatientMeasurement(Patient p, String code, GetMeasurementCallback callback,
-                                         ObservationTracker observationTracker){
+    public Observation updatePatientMeasurement(Patient p, String code, GetMeasurementCallback callback,
+                                         ObservationTracker measurementTracker){
 
         String url = "https://fhir.monash.edu/hapi-fhir-jpaserver/fhir/Observation?subject=" + p.getId()
                 + "&code=" + code + "&_sort=-_lastUpdated&_count=1&_format=json";
 
         System.out.println(url);
+        Observation newObservation = null;
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
@@ -82,15 +83,19 @@ public class GetMeasurementService {
                 }
 
                 p.addObservation(observation);
+                newObservation = observation;
             }
 
             if (callback != null) {
                 callback.updateView();
             }
+
+
         }
         catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+        return newObservation;
     }
 
 

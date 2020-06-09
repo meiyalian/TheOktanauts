@@ -5,8 +5,7 @@
 
 <AnchorPane prefHeight="704.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.oktanauts.TableViewController">
-   <TableView fx:id="monitorTable" layoutX="166.0" layoutY="11.0" prefHeight="659.0" prefWidth="762.0"/>
-   <AnchorPane layoutX="8.0" layoutY="399.0" prefHeight="291.0" prefWidth="923.0"/>
+   <TableView fx:id="monitorTable" layoutX="166.0" layoutY="11.0" prefHeight="404.0" prefWidth="771.0"/>
    <ListView fx:id="modifyView" layoutX="10.0" layoutY="49.0" prefHeight="249.0" prefWidth="146.0"/>
    <Button layoutX="10.0" layoutY="317.0" mnemonicParsing="false" onAction="#CLGraphWindow" prefHeight="30.0"
            prefWidth="145.0" text="Cholesterol Graph"/>
@@ -14,4 +13,5 @@
    <Button layoutX="10.0" layoutY="368.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="145.0"
            text="BP Histogram"/>
    <Label fx:id="patientToAdd" layoutX="16.0" layoutY="14.0" prefHeight="18.0" prefWidth="138.0"/>
+   <BorderPane fx:id="trackingPane" layoutX="14.0" layoutY="428.0" prefHeight="270.0" prefWidth="919.0"/>
 </AnchorPane>

@@ -1,13 +1,8 @@
 package org.oktanauts;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,16 +10,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.util.StringConverter;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.oktanauts.model.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.Iterator;
-import java.util.concurrent.BlockingDeque;
+
 
 /**
  * This class is the controller class for the monitor table of the app
@@ -33,6 +28,7 @@ import java.util.concurrent.BlockingDeque;
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML private TableView<Patient> monitorTable;
     @FXML private ListView<String> modifyView;
+    @FXML BorderPane trackingPane;
 
     private TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> cholCol = new TableColumn<>("Total\nCholesterol");
@@ -44,6 +40,8 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private ObservableList<Patient> monitoredPatients = FXCollections.observableArrayList();
     private GetMeasurementService getMeasurementService = new GetMeasurementService();
     private double averageCholesterol = 0;
+    private int x=200,y=120; // x and y value for monitoring blood pressure
+    private ObservableList<Patient> highBPPatient = FXCollections.observableArrayList();
 
     private ArrayList<Patient> patientQueue = new ArrayList<>();
     private ArrayList<Observation> currentObservations = new ArrayList<>();
@@ -57,6 +55,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
 
     private GraphicalCLController graphicalCLController;
+    private BPTrackingPageController bpTrackingPageController;
 
 
 
@@ -70,6 +69,19 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void initialize(URL location, ResourceBundle resources) {
         currentObservations.add(CL_OBSERVATION);
         currentObservations.add(BP_OBSERVATION);
+
+        FXMLLoader tableLoader = new FXMLLoader();
+        tableLoader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
+        Pane view = null;
+        try {
+            view = tableLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        bpTrackingPageController = tableLoader.getController();
+        bpTrackingPageController.initData(highBPPatient);
+        trackingPane.setCenter(view);
 
         //selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -338,7 +350,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             Patient p = entry.getKey();
             ArrayList<String> monitorItems = entry.getValue();
             for (String item : monitorItems){
-                getMeasurementService.updatePatientMeasurement(p, item, this ,null);
+                Observation newObservation = getMeasurementService.updatePatientMeasurement(p, item, this ,null);
             }
 //        ArrayList<Patient> pList = entry.getValue();
 //        GetMeasurementService.measurementName key = entry.getKey();
@@ -350,22 +362,25 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     }
 
     /**
-     * Updates the warning highlighting of the table
+     * set x and y value for bloodpressure
+     *
+     * @param x,y the new x and y value
+     */
+    public void setXYVal(int x, int y){
+        this.x = x;
+        this.y = y;
+        System.out.println("update!! x: " + this.x);
+        updateView();
+
+    }
+
+    /**
+     * Updates the view
      */
     @Override
     public void updateView() {
         monitorTable.refresh();
-        updateHighlight();
-        if(graphicalCLController != null){
-            Platform.runLater(() -> graphicalCLController.updateView());
-
-        }
-    }
-
-    /**
-     * Calculates the average measurement of the monitored patients and highlights any patients that are above it
-     */
-    public void updateHighlight() {
+        Platform.runLater(this::updateHighBPPatient);
         double sum = 0.0;
         int count = 0;
         for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
@@ -381,15 +396,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                 }
             }
         }
-//        for (Patient patient : monitorManager.get(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL)) {
-//            System.out.println("monitored cholesterol level patient name :" + patient.getName());
-//            Measurement m = patient.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL);
-//            if (m != null){
-//                sum += m.getValue();
-//                count += 1;
-//            }
-//        }
-
         double average = 0.0;
         if (count > 0) {
             average = sum / count;
@@ -397,8 +403,66 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
         System.out.println("count: "+ count);
         System.out.println("average value: " + average);
-
         this.averageCholesterol = average;
+
+        if(graphicalCLController != null){ // update graph view
+            Platform.runLater(() -> graphicalCLController.updateView());
+
+        }
     }
+
+    private void updateHighBPPatient(){
+        highBPPatient.clear();
+        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
+            Patient p = entry.getKey();
+            ArrayList<String> monitorItems = entry.getValue();
+            if (monitorItems.contains((BLOOD_PRESSURE))){
+                if (p.hasMeasurement(BLOOD_PRESSURE,SYSTOLIC_BLOOD_PRESSURE)){
+                    Measurement sysMeasurement = p.getObservation(BLOOD_PRESSURE).getMeasurement(SYSTOLIC_BLOOD_PRESSURE);
+                    Measurement diaMeasurement = p.getObservation(BLOOD_PRESSURE).getMeasurement(DIASTOLIC_BLOOD_PRESSURE);
+                    if(sysMeasurement.getValue() > x || diaMeasurement.getValue() > y){
+                        highBPPatient.add(p);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+//    /**
+//     * Calculates the average measurement of the monitored patients and highlights any patients that are above it
+//     */
+//    public void updateHighlight() {
+//        double sum = 0.0;
+//        int count = 0;
+//        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
+//            Patient patient = entry.getKey();
+//            ArrayList<String> monitorItems = entry.getValue();
+//            if (monitorItems.contains(CHOLESTEROL_LEVEL)) {
+//                if (patient.hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL)) {
+//                    Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
+//                    if (measurement != null) {
+//                        sum += measurement.getValue();
+//                        count += 1;
+//                    }
+//                }
+//            }
+//            if (monitorItems.contains((BLOOD_PRESSURE))){
+//                updateHighBPPatient(patient);
+//            }
+//        }
+//
+//        double average = 0.0;
+//        if (count > 0) {
+//            average = sum / count;
+//        }
+//
+//        System.out.println("count: "+ count);
+//        System.out.println("average value: " + average);
+//
+//        this.averageCholesterol = average;
+//    }
 }
 

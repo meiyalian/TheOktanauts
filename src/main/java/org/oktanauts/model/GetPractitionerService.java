@@ -176,10 +176,6 @@ public class GetPractitionerService {
             }
         }
 
-
-        System.out.println("dupes: " + dupeCount);
-        System.out.println("count: " + count);
-        System.out.println("total: " + patientIds.size());
         p = new Practitioner(practIdentifier, patients);
         if (callback != null){
             callback.updateUI(p);

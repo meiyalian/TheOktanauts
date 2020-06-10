@@ -60,7 +60,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private BPTrackingPageController bpTrackingPageController;
 
 
-
     /**
      * Initialises the table for the view
      *
@@ -247,7 +246,8 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitoring.clear();
         for (String item : monitorItems){
             monitoring.add(item);
-            getMeasurementService.updatePatientMeasurement(p, item, this, null);
+            System.out.println("Apply change");
+            getMeasurementService.updatePatientMeasurement(p, item, this);
         }
         System.out.println("apply ");
         System.out.println(monitorManager.get(p));
@@ -315,15 +315,17 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitoredPatients.add(patient);
         monitorManager.put(patient, monitorItems);
 
+        System.out.println("Add patient");
         for (String observation : monitorItems) {
-            getMeasurementService.updatePatientMeasurement(patient, observation, this, null);
+            getMeasurementService.updatePatientMeasurement(patient, observation, null);
         }
 
         // if the graph view is opened, update the graph view
-        if(graphicalCLController != null){
+        if (graphicalCLController != null){
             graphicalCLController.getMonitorList().add(patient);
         }
-        updateView();
+
+        //this.updateView();
     }
 
     /**
@@ -351,8 +353,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         for (Map.Entry<Patient, ArrayList<String>> entry : monitorManager.entrySet()) {
             Patient p = entry.getKey();
             ArrayList<String> monitorItems = entry.getValue();
+            System.out.println("Refresh measurement");
             for (String item : monitorItems){
-                Observation newObservation = getMeasurementService.updatePatientMeasurement(p, item, this ,null);
+                getMeasurementService.updatePatientMeasurement(p, item, this);
             }
 //        ArrayList<Patient> pList = entry.getValue();
 //        GetMeasurementService.measurementName key = entry.getKey();

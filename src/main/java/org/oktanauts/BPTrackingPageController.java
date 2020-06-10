@@ -44,9 +44,8 @@ public class BPTrackingPageController {
     @FXML
     private void add(ActionEvent e)  {
         ObservableList<Patient> chosenPatients = patientList.getSelectionModel().getSelectedItems();
-        for (Patient p: chosenPatients) {
-            getMeasurementService.getNewObservationTracker(p,BLOOD_PRESSURE, 5);
-
+        for (Patient patient: chosenPatients) {
+            patient.addObservationTracker(BLOOD_PRESSURE, 5);
         }
     }
 

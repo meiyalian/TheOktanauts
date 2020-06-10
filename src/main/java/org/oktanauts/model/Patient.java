@@ -22,7 +22,7 @@ public class Patient {
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
     private HashSet<String> monitoredMeasurements;
-    private HashMap<String, Observation> observations;
+    private HashMap<String, ObservationTracker> observationTrackers;
 
 
     /**
@@ -46,7 +46,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
-        this.observations = new HashMap<>();
+        this.observationTrackers = new HashMap<>();
     }
 
     /**
@@ -166,8 +166,8 @@ public class Patient {
      *
      * @param observation the observation to be added to the patient's cache
      */
-    public void addObservation(Observation observation) {
-        observations.put(observation.getCode(), observation);
+    public void addObservation(Observation observation, int position) {
+        observationTrackers.get(observation.getCode()).addObservation(observation, position);
     }
 
     /**
@@ -177,24 +177,41 @@ public class Patient {
      * @return the desired observation from the cache if it exists
      */
     public Observation getObservation(String observationCode) {
-        if (!observations.containsKey(observationCode)) {
+        if (!observationTrackers.containsKey(observationCode)) {
             return null;
         }
-        return observations.get(observationCode);
+        return observationTrackers.get(observationCode).getLatest();
     }
 
     public boolean hasObservation(String observationCode) {
-        return observations.containsKey(observationCode);
+        if (observationTrackers.containsKey(observationCode)) {
+            return observationTrackers.get(observationCode).getCount() > 0;
+        }
+        return false;
     }
 
     public boolean hasMeasurement(String observationCode, String measurementCode) {
-        if (observations.containsKey(observationCode)) {
-            if (observations.get(observationCode).hasMeasurement(measurementCode)) {
-                return true;
+        if (observationTrackers.containsKey(observationCode)) {
+            if (observationTrackers.get(observationCode).getCount() > 0) {
+                return observationTrackers.get(observationCode).getLatest().hasMeasurement(measurementCode);
             }
-            return false;
         }
         return false;
+    }
+
+    public void addObservationTracker(ObservationTracker observationTracker) {
+        observationTrackers.put(observationTracker.getObservationCode(), observationTracker);
+    }
+
+    public void addObservationTracker(String code, int numOfRecords) {
+        observationTrackers.put(code, new ObservationTracker(code, numOfRecords));
+    }
+
+    public ObservationTracker getObservationTracker(String code) {
+        if (observationTrackers.containsKey(code)) {
+            return observationTrackers.get(code);
+        }
+        return null;
     }
 
 }

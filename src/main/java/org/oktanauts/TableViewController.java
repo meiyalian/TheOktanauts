@@ -50,11 +50,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private HashMap<Patient, ArrayList<String>> monitorManager = new HashMap<>();
 
     private static final Observation CL_OBSERVATION = new Observation("2093-3", "TOTAL CHOLESTEROL", null);
-//    private static final String CHOLESTEROL_LEVEL = "2093-3";
     private static final Observation BP_OBSERVATION = new Observation("55284-4", "BLOOD PRESSURE", null);
-//    private static final String BLOOD_PRESSURE = "55284-4";
-//    private static final String DIASTOLIC_BLOOD_PRESSURE = "8462-4";
-//    private static final String SYSTOLIC_BLOOD_PRESSURE = "8480-6";
 
     private GraphicalCLController graphicalCLController;
     private BPTrackingPageController bpTrackingPageController;
@@ -325,7 +321,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             graphicalCLController.getMonitorList().add(patient);
         }
 
-        //this.updateView();
+        this.updateView();
     }
 
     /**
@@ -336,6 +332,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public synchronized void removeMonitoredPatient(Patient patient) {
         if (monitoredPatients.size() > 0) {
             monitoredPatients.remove(patient);
+            highBPPatient.remove(patient);
         }
 
         monitorManager.remove(patient);
@@ -357,12 +354,8 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             for (String item : monitorItems){
                 getMeasurementService.updatePatientMeasurement(p, item, this);
             }
-//        ArrayList<Patient> pList = entry.getValue();
-//        GetMeasurementService.measurementName key = entry.getKey();
-//        for (Patient p: pList) {
-//            getMeasurementService.updateMonitoredPatientMeasurement(p, key, this ,null);
-//        }
         }
+
 
     }
 
@@ -386,29 +379,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void updateView() {
         monitorTable.refresh();
         Platform.runLater(this::updateHighBPPatient);
-        double sum = 0.0;
-        int count = 0;
-        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
-            Patient patient = entry.getKey();
-            ArrayList<String> monitorItems = entry.getValue();
-            if (monitorItems.contains(CHOLESTEROL_LEVEL)) {
-                if (patient.hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL)) {
-                    Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
-                    if (measurement != null) {
-                        sum += measurement.getValue();
-                        count += 1;
-                    }
-                }
-            }
-        }
-        double average = 0.0;
-        if (count > 0) {
-            average = sum / count;
-        }
-
-        System.out.println("count: "+ count);
-        System.out.println("average value: " + average);
-        this.averageCholesterol = average;
+        updateHighlight();
 
         if(graphicalCLController != null){ // update graph view
             Platform.runLater(() -> graphicalCLController.updateView());
@@ -431,43 +402,41 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                 }
             }
         }
+        bpTrackingPageController.updateView();
 
 
     }
 
 
-//    /**
-//     * Calculates the average measurement of the monitored patients and highlights any patients that are above it
-//     */
-//    public void updateHighlight() {
-//        double sum = 0.0;
-//        int count = 0;
-//        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
-//            Patient patient = entry.getKey();
-//            ArrayList<String> monitorItems = entry.getValue();
-//            if (monitorItems.contains(CHOLESTEROL_LEVEL)) {
-//                if (patient.hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL)) {
-//                    Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
-//                    if (measurement != null) {
-//                        sum += measurement.getValue();
-//                        count += 1;
-//                    }
-//                }
-//            }
-//            if (monitorItems.contains((BLOOD_PRESSURE))){
-//                updateHighBPPatient(patient);
-//            }
-//        }
-//
-//        double average = 0.0;
-//        if (count > 0) {
-//            average = sum / count;
-//        }
-//
-//        System.out.println("count: "+ count);
-//        System.out.println("average value: " + average);
-//
-//        this.averageCholesterol = average;
-//    }
+    /**
+     * Calculates the average measurement of the monitored patients and highlights any patients that are above it
+     */
+    public void updateHighlight() {
+        double sum = 0.0;
+        int count = 0;
+        for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
+            Patient patient = entry.getKey();
+            ArrayList<String> monitorItems = entry.getValue();
+            if (monitorItems.contains(CHOLESTEROL_LEVEL)) {
+                if (patient.hasMeasurement(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL)) {
+                    Measurement measurement = patient.getObservation(CHOLESTEROL_LEVEL).getMeasurement(CHOLESTEROL_LEVEL);
+                    if (measurement != null) {
+                        sum += measurement.getValue();
+                        count += 1;
+                    }
+                }
+            }
+        }
+
+        double average = 0.0;
+        if (count > 0) {
+            average = sum / count;
+        }
+
+        System.out.println("count: "+ count);
+        System.out.println("average value: " + average);
+
+        this.averageCholesterol = average;
+    }
 }
 

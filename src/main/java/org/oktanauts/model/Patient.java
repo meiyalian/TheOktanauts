@@ -204,7 +204,7 @@ public class Patient {
     }
 
     public void addObservationTracker(String code, int numOfRecords) {
-        observationTrackers.put(code, new ObservationTracker(code, numOfRecords));
+        observationTrackers.put(code, new ObservationTracker(code, numOfRecords,this));
     }
 
     public ObservationTracker getObservationTracker(String code) {

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane layoutX="10.0" layoutY="426.0" prefHeight="270.0" prefWidth="919.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.BPTrackingPageController">
-   <children>
-      <ListView fx:id="patientList" layoutX="18.0" layoutY="29.0" prefHeight="214.0" prefWidth="205.0" />
-      <ListView layoutX="337.0" layoutY="13.0" prefHeight="242.0" prefWidth="564.0" />
-      <Label alignment="CENTER" layoutX="17.0" layoutY="6.0" prefHeight="17.0" prefWidth="205.0" text="High BloodPressure Patient" />
-      <Button layoutX="243.0" layoutY="68.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0" text="add" />
-      <Button layoutX="243.0" layoutY="119.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0" text="remove" />
-   </children>
+<AnchorPane layoutX="10.0" layoutY="426.0" prefHeight="270.0" prefWidth="919.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.BPTrackingPageController">
+   <ListView fx:id="patientList" layoutX="18.0" layoutY="29.0" prefHeight="214.0" prefWidth="205.0"/>
+   <ListView fx:id="historyView" layoutX="337.0" layoutY="13.0" prefHeight="242.0" prefWidth="564.0"/>
+   <Label alignment="CENTER" layoutX="17.0" layoutY="6.0" prefHeight="17.0" prefWidth="205.0"
+          text="High BloodPressure Patient"/>
+   <Button layoutX="243.0" layoutY="68.0" mnemonicParsing="false" onAction="#add" prefHeight="34.0" prefWidth="73.0"
+           text="add"/>
+   <Button layoutX="243.0" layoutY="119.0" mnemonicParsing="false" onAction="#remove" prefHeight="34.0" prefWidth="73.0"
+           text="remove"/>
 </AnchorPane>

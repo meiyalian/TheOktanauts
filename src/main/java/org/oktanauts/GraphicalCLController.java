@@ -1,11 +1,10 @@
 package org.oktanauts;
 
-import javafx.application.Platform;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -14,11 +13,6 @@ import org.oktanauts.model.Measurement;
 import org.oktanauts.model.Observation;
 import org.oktanauts.model.Patient;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
 
 import static org.oktanauts.model.GetMeasurementService.CHOLESTEROL_LEVEL;
 

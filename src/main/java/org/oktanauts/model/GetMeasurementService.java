@@ -37,7 +37,7 @@ public class GetMeasurementService {
         return sb.toString();
     }
 
-    private static Measurement extractMeasurement(JSONObject component) throws ParseException {
+    private static Measurement extractMeasurement(JSONObject component) {
         String compCode = component.getJSONObject("code").getJSONArray("coding")
                 .getJSONObject(0).getString("code");
         String compName = component.getJSONObject("code").getString("text");
@@ -68,7 +68,7 @@ public class GetMeasurementService {
             System.out.println("Find " + observationTracker.getMaxNumOfRecords());
         }
         else {
-            observationTracker = new ObservationTracker(code, 1);
+            observationTracker = new ObservationTracker(code, 1,patient);
             patient.addObservationTracker(observationTracker);
             url += "&_count=1";
             System.out.println("Find 1");

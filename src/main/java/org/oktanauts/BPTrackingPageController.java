@@ -29,8 +29,8 @@ public class BPTrackingPageController implements GetMeasurementCallback {
     private GetMeasurementService getMeasurementService= new GetMeasurementService();
 
 
-    public void initData(ObservableList<Patient> patients) {
 
+    public void initData(ObservableList<Patient> patients) {
         this.highBPPatient = patients;
         patientsCanAdd.addAll(highBPPatient);
         System.out.println("patients can add: "+ patientsCanAdd);
@@ -111,6 +111,11 @@ public class BPTrackingPageController implements GetMeasurementCallback {
     public void updateView() {
         historyView.setItems(null);
         historyView.setItems(trackingPatients);
+        System.out.println("update in background");
 
+    }
+
+    public ObservableList<Patient> getTrackingPatients(){
+        return this.trackingPatients;
     }
 }

@@ -31,6 +31,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     @FXML private TableView<Patient> monitorTable;
     @FXML private ListView<String> modifyView;
     @FXML BorderPane trackingPane;
+    @FXML Button switchViewBtn;
 
     private TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> cholCol = new TableColumn<>("Total\nCholesterol");
@@ -54,6 +55,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     private GraphicalCLController graphicalCLController;
     private BPTrackingPageController bpTrackingPageController;
+    private BPGraphicalController bpGraphicalController;
 
 
     /**
@@ -231,6 +233,43 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             }
         });
 
+
+    }
+
+    @FXML
+    public void switchBPView(){
+
+        if(switchViewBtn.getText().equals("BP graphView")){
+            FXMLLoader graphViewLoder = new FXMLLoader();
+            graphViewLoder.setLocation(App.class.getResource("/org/oktanauts/bpGraphPage.fxml"));
+            Pane view = null;
+            try {
+                view = graphViewLoder.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(bpGraphicalController == null){
+                bpGraphicalController = graphViewLoder.getController();
+                bpGraphicalController.initData(bpTrackingPageController.getTrackingPatients());
+            }
+
+            trackingPane.setCenter(view);
+            switchViewBtn.setText("BP listView");
+        }else {
+            FXMLLoader listViewLoder = new FXMLLoader();
+            listViewLoder.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
+            Pane view = null;
+            try {
+                view = listViewLoder.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            trackingPane.setCenter(view);
+            switchViewBtn.setText("BP graphView");
+
+        }
 
     }
 

@@ -83,4 +83,8 @@ public class ObservationTracker {
     public int getMaxNumOfRecords() {
         return this.maxNumOfRecords;
     }
+
+    public ArrayList<Observation> getRecords() {
+        return records;
+    }
 }

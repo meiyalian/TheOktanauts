@@ -25,20 +25,17 @@ public class ObservationTracker {
      * @param observation the latest measurement
      */
     public void addObservation(Observation observation, int position) {
-        if (position < maxNumOfRecords){
-            records.add(position,observation);
+        records.add(position,observation);
+
+        if (this.records.size() > this.maxNumOfRecords) {
+            this.records.remove(this.records.size() - 1);
         }
     }
 
-
-
-
     public void setMaxNumberOfRecords(int numberOfRecords){
         this.maxNumOfRecords = numberOfRecords;
-        if (numberOfRecords < records.size()){
-            for (int i = 0; i < records.size()-numberOfRecords;i++){
-                records.remove(records.size()-1);
-            }
+        while (this.records.size() > this.maxNumOfRecords) {
+            this.records.remove(this.records.size() - 1);
         }
     }
 

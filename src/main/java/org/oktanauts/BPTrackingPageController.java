@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -14,7 +15,9 @@ import org.oktanauts.model.ObservationTracker;
 import org.oktanauts.model.Patient;
 
 
+import java.net.URL;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 import static org.oktanauts.model.GetMeasurementService.BLOOD_PRESSURE;
 import static org.oktanauts.model.GetMeasurementService.SYSTOLIC_BLOOD_PRESSURE;
@@ -35,6 +38,22 @@ public class BPTrackingPageController implements GetMeasurementCallback {
         patientsCanAdd.addAll(highBPPatient);
         System.out.println("patients can add: "+ patientsCanAdd);
         patientList.setItems(patientsCanAdd);
+
+
+        historyView.setCellFactory(cell -> new ListCell<Patient>() {
+            @Override
+            protected void updateItem(Patient p, boolean empty) {
+                super.updateItem(p, empty);
+                if (empty || p == null) {
+                    setText(null);
+                } else {
+                    setText(p.getObservationTracker(BLOOD_PRESSURE).display(SYSTOLIC_BLOOD_PRESSURE));
+                }
+            }
+        });
+        historyView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+
         patientList.setCellFactory(cell -> new ListCell<Patient>() {
             @Override
             protected void updateItem(Patient p, boolean empty) {
@@ -47,6 +66,9 @@ public class BPTrackingPageController implements GetMeasurementCallback {
             }
         });
         patientList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+
+
         highBPPatient.addListener((ListChangeListener<Patient>) change ->{
             while (change.next()){
                 if(change.wasAdded()){
@@ -63,18 +85,7 @@ public class BPTrackingPageController implements GetMeasurementCallback {
         });
 
         historyView.setItems(trackingPatients);
-        historyView.setCellFactory(cell -> new ListCell<Patient>() {
-            @Override
-            protected void updateItem(Patient p, boolean empty) {
-                super.updateItem(p, empty);
-                if (empty || p == null) {
-                    setText(null);
-                } else {
-                    setText(p.getObservationTracker(BLOOD_PRESSURE).display(SYSTOLIC_BLOOD_PRESSURE));
-                }
-            }
-        });
-        historyView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 
     }
 
@@ -85,8 +96,8 @@ public class BPTrackingPageController implements GetMeasurementCallback {
         for (Patient p: chosenPatients) {
             p.getObservationTracker(BLOOD_PRESSURE).setMaxNumberOfRecords(5);
             if(!trackingPatients.contains(p)){
-                trackingPatients.add(p);
                 getMeasurementService.updatePatientMeasurement(p,BLOOD_PRESSURE,this);
+                trackingPatients.add(p);
 
             }
 
@@ -111,11 +122,15 @@ public class BPTrackingPageController implements GetMeasurementCallback {
     public void updateView() {
         historyView.setItems(null);
         historyView.setItems(trackingPatients);
+
         System.out.println("update in background");
+        System.out.println("tracking patient" + this.trackingPatients);
+        System.out.println("to add: " + this.patientsCanAdd);
 
     }
 
     public ObservableList<Patient> getTrackingPatients(){
         return this.trackingPatients;
     }
+
 }

@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="704.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.oktanauts.TableViewController">
-   <children>
-      <TableView fx:id="monitorTable" layoutX="166.0" layoutY="11.0" prefHeight="404.0" prefWidth="771.0" />
-      <ListView fx:id="modifyView" layoutX="10.0" layoutY="49.0" prefHeight="249.0" prefWidth="146.0" />
-      <Button layoutX="10.0" layoutY="317.0" mnemonicParsing="false" onAction="#CLGraphWindow" prefHeight="30.0" prefWidth="145.0" text="Cholesterol Graph" />
-      <Label layoutX="16.0" layoutY="181.0" prefHeight="17.0" prefWidth="145.0" />
-      <Button fx:id="switchViewBtn" layoutX="10.0" layoutY="368.0" mnemonicParsing="false" onAction="#switchBPView" prefHeight="30.0" prefWidth="145.0" text="BP graphView" />
-      <Label fx:id="patientToAdd" layoutX="16.0" layoutY="14.0" prefHeight="18.0" prefWidth="138.0" />
-      <BorderPane fx:id="trackingPane" layoutX="14.0" layoutY="428.0" prefHeight="270.0" prefWidth="919.0" />
-   </children>
+<AnchorPane prefHeight="704.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.oktanauts.TableViewController">
+    <TableView fx:id="monitorTable" layoutX="166.0" layoutY="11.0" prefHeight="354.0" prefWidth="771.0"/>
+    <ListView fx:id="modifyView" layoutX="10.0" layoutY="49.0" prefHeight="249.0" prefWidth="146.0"/>
+    <Button layoutX="10.0" layoutY="317.0" mnemonicParsing="false" onAction="#CLGraphWindow" prefHeight="30.0"
+            prefWidth="145.0" text="Cholesterol Graph"/>
+    <Label layoutX="16.0" layoutY="181.0" prefHeight="17.0" prefWidth="145.0"/>
+    <Label fx:id="patientToAdd" layoutX="16.0" layoutY="14.0" prefHeight="18.0" prefWidth="138.0"/>
+    <TabPane fx:id="trackingPane" layoutX="13.0" layoutY="379.0" prefHeight="322.0" prefWidth="919.0"
+             tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="tab1" text="Tracking View">
+            <!--              <fx:include source="bpGraphPage.fxml"/>-->
+        </Tab>
+        <Tab fx:id="tab2" text="Graph View">
+            <!--              <fx:include source="bpGraphPage.fxml"/>-->
+        </Tab>
+    </TabPane>
 </AnchorPane>

@@ -30,8 +30,10 @@ import static org.oktanauts.model.GetMeasurementService.*;
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML private TableView<Patient> monitorTable;
     @FXML private ListView<String> modifyView;
-    @FXML BorderPane trackingPane;
+    @FXML TabPane trackingPane;
     @FXML Button switchViewBtn;
+    @FXML Tab tab1;
+    @FXML Tab tab2;
 
     private TableColumn<Patient, String> nameCol = new TableColumn<>("Patient Name");
     private TableColumn<Patient, String> cholCol = new TableColumn<>("Total\nCholesterol");
@@ -69,18 +71,41 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         currentObservations.add(CL_OBSERVATION);
         currentObservations.add(BP_OBSERVATION);
 
-        FXMLLoader tableLoader = new FXMLLoader();
-        tableLoader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
-        Pane view = null;
-        try {
-            view = tableLoader.load();
+//        FXMLLoader tableLoader = new FXMLLoader();
+//        tableLoader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
+//        Pane view = null;
+//        try {
+//            view = tableLoader.load();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        bpTrackingPageController = tableLoader.getController();
+//        bpTrackingPageController.initData(highBPPatient);
+//        trackingPane.setCenter(view);
+
+        FXMLLoader loader = new FXMLLoader();
+        try{
+            loader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
+            AnchorPane anch1 = loader.load();
+            bpTrackingPageController = loader.getController();
+            bpTrackingPageController.initData(highBPPatient);
+            tab1.setContent(anch1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("load fail");
+        }
+        loader = new FXMLLoader();
+        try{
+            loader.setLocation(App.class.getResource("/org/oktanauts/bpGraphPage.fxml"));
+            AnchorPane anch2 =  loader.load();
+            bpGraphicalController = loader.getController();
+            bpGraphicalController.initData(bpTrackingPageController.getTrackingPatients());
+            tab2.setContent(anch2);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        bpTrackingPageController = tableLoader.getController();
-        bpTrackingPageController.initData(highBPPatient);
-        trackingPane.setCenter(view);
 
         //selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -236,42 +261,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
     }
 
-    @FXML
-    public void switchBPView(){
-
-        if(switchViewBtn.getText().equals("BP graphView")){
-            FXMLLoader graphViewLoder = new FXMLLoader();
-            graphViewLoder.setLocation(App.class.getResource("/org/oktanauts/bpGraphPage.fxml"));
-            Pane view = null;
-            try {
-                view = graphViewLoder.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if(bpGraphicalController == null){
-                bpGraphicalController = graphViewLoder.getController();
-                bpGraphicalController.initData(bpTrackingPageController.getTrackingPatients());
-            }
-
-            trackingPane.setCenter(view);
-            switchViewBtn.setText("BP listView");
-        }else {
-            FXMLLoader listViewLoder = new FXMLLoader();
-            listViewLoder.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
-            Pane view = null;
-            try {
-                view = listViewLoder.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            trackingPane.setCenter(view);
-            switchViewBtn.setText("BP graphView");
-
-        }
-
-    }
 
     @FXML
     public synchronized void applyChange(){
@@ -442,7 +431,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             }
         }
         bpTrackingPageController.updateView();
-
+        bpGraphicalController.updateView();
 
     }
 

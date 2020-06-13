@@ -49,38 +49,10 @@ public class PatientList implements Aggregate {
      */
     @Override
     public Iterator getIterator() {
-        return new PatientIterator();
+        return new PatientIterator(this);
     }
 
 
 
-    /**
-     * This class is the default normal iterator for patientList object.
-     */
-    private class PatientIterator implements Iterator{
-        int index;
 
-        /**
-         * Returns whether or not there is a patient next in the sequence
-         *
-         * @return a boolean value of whether there is another patient after the current index
-         */
-        @Override
-        public boolean hasNext() {
-            return index < patients.size();
-        }
-
-        /**
-         * Gets the next patient in the sequence if it exists
-         *
-         * @return the next patient if it exists
-         */
-        @Override
-        public Object next() {
-            if(this.hasNext()){
-                return patients.get(index++);
-            }
-            return null;
-        }
-    }
 }

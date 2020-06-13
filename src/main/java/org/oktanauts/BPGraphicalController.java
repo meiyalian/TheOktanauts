@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BPGraphicalController {
+public class BPGraphicalController implements  subController {
 
     @FXML ScrollPane scrollPane;
     private ObservableList<Patient> trackingPatients;

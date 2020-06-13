@@ -226,35 +226,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
                         updateView();
                     }));
-
-                // initialize the list view
-//                patientListView.getItems().addAll(allPatients);
-//                patientListView.setCellFactory(CheckBoxListCell.forListView(Patient::selectedProperty, new StringConverter<Patient>() {
-//                    @Override
-//                    public String toString(Patient patient) {
-//                        return patient.getName();
-//                    }
-//
-//                    @Override
-//                    public Patient fromString(String s) {
-//                        return null;
-//                    }
-//                }));
-
-//                ArrayList<String> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
-//                for (String item : monitorItems) {
-//                    switch (item) {
-//                        case CHOLESTEROL_LEVEL:
-//                            modifyView.getSelectionModel().select("TOTAL CHOLESTEROL");
-//                            break;
-//                        case BLOOD_PRESSURE:
-//                            modifyView.getSelectionModel().select("BLOOD PRESSURE");
-//                            break;
-//                        default:
-//                            modifyView.getSelectionModel().select("N/A");
-//                             break;
-//                    }
-//                }
             }
         });
 

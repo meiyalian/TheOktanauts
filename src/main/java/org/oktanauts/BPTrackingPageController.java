@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import static org.oktanauts.model.GetMeasurementService.BLOOD_PRESSURE;
 import static org.oktanauts.model.GetMeasurementService.SYSTOLIC_BLOOD_PRESSURE;
 
-public class BPTrackingPageController implements GetMeasurementCallback {
+public class BPTrackingPageController implements GetMeasurementCallback, subController {
     @FXML ListView patientList;
     @FXML ListView historyView;
 

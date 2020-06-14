@@ -15,8 +15,10 @@ import org.oktanauts.model.Patient;
 
 
 import static org.oktanauts.model.GetMeasurementService.CHOLESTEROL_LEVEL;
-
-public class GraphicalCLController implements subController{
+/**
+ * This class is the view(controller) class for the graph view of cholesterol level patients
+ */
+public class GraphicalCLController {
 
     @FXML
     private CategoryAxis xAxis;

@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 
-
+/**
+ * This class is the model class for tracking observations
+ */
 public class ObservationTracker {
     private ArrayList<Observation> records;
     private String observationCode;
@@ -20,7 +22,7 @@ public class ObservationTracker {
     }
 
     /**
-     * Adds the new latest measurement
+     * Adds an measurement to tracker
      *
      * @param observation the latest measurement
      */
@@ -32,6 +34,11 @@ public class ObservationTracker {
         }
     }
 
+    /**
+     * set number of records the tracker needs to track
+     *
+     * @param numberOfRecords number of records the tracker needs to track
+     */
     public void setMaxNumberOfRecords(int numberOfRecords){
         this.maxNumOfRecords = numberOfRecords;
         while (this.records.size() > this.maxNumOfRecords) {
@@ -53,6 +60,11 @@ public class ObservationTracker {
     }
 
 
+    /**
+     * display the information of one measurement
+     *
+     * @param measurementCode  measurement code
+     */
     public String display ( String measurementCode){
         StringBuilder retString = new StringBuilder(patient.getName() + ":");
         for (Observation o: records ) {
@@ -61,6 +73,11 @@ public class ObservationTracker {
         return retString.toString();
     }
 
+
+    /**
+     * get the latest measurement
+     *
+     */
     public Observation getLatest() {
         if (records.size() == 0){
             return null;
@@ -68,6 +85,10 @@ public class ObservationTracker {
         return this.records.get(0);
     }
 
+    /**
+     * get the latest measurement updated time
+     *
+     */
     public Timestamp getLastUpdated() {
         if (records.size() > 0) {
             return this.records.get(0).getTimestamp();

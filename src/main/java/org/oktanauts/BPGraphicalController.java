@@ -16,10 +16,14 @@ import static org.oktanauts.model.GetMeasurementService.BLOOD_PRESSURE;
 import static org.oktanauts.model.GetMeasurementService.SYSTOLIC_BLOOD_PRESSURE;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class BPGraphicalController implements  subController {
+
+/**
+ * This class is the view(controller) class for the graph view of high blood pressure patients
+ */
+
+public class BPGraphicalController {
 
     @FXML ScrollPane scrollPane;
     private ObservableList<Patient> trackingPatients;

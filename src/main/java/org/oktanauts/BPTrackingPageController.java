@@ -11,18 +11,16 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import org.oktanauts.model.GetMeasurementCallback;
 import org.oktanauts.model.GetMeasurementService;
-import org.oktanauts.model.ObservationTracker;
 import org.oktanauts.model.Patient;
 
-
-import java.net.URL;
-import java.util.HashMap;
-import java.util.ResourceBundle;
 
 import static org.oktanauts.model.GetMeasurementService.BLOOD_PRESSURE;
 import static org.oktanauts.model.GetMeasurementService.SYSTOLIC_BLOOD_PRESSURE;
 
-public class BPTrackingPageController implements GetMeasurementCallback, subController {
+/**
+ * This class is the controller class for tracking patients with high blood pressure
+ */
+public class BPTrackingPageController implements GetMeasurementCallback {
     @FXML ListView patientList;
     @FXML ListView historyView;
 

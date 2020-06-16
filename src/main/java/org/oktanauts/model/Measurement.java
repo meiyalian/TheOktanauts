@@ -24,7 +24,6 @@ public class Measurement {
         this.type = type;
         this.value = value;
         this.unit = unit;
-
     }
 
     /**

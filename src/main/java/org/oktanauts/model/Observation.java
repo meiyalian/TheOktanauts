@@ -95,13 +95,13 @@ public class Observation {
         return isMonitored.get();
     }
 
+    public void setSelected(boolean isSelected) {
+        this.isMonitored = new SimpleBooleanProperty(isSelected);
+    }
+
     @Override
     public String toString() {
-        StringBuilder retString = new StringBuilder();
-        for (Map.Entry<String, Measurement> entry : components.entrySet()) {
-            retString.append(entry.getValue().toString());
-        }
-        return retString.toString();
+        return this.type;
     }
 
 }

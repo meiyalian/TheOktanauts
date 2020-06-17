@@ -10,15 +10,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import org.oktanauts.model.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.Iterator;
 
 import static org.oktanauts.model.GetMeasurementService.*;
 
@@ -29,7 +32,7 @@ import static org.oktanauts.model.GetMeasurementService.*;
 
 public class TableViewController implements Initializable, GetMeasurementCallback {
     @FXML private TableView<Patient> monitorTable;
-    @FXML private ListView<String> modifyView;
+    @FXML private ListView<Observation> modifyView;
     @FXML TabPane trackingPane;
     //@FXML Button switchViewBtn;
     @FXML Tab tab1;
@@ -198,20 +201,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                         (p.getValue().hasObservation(BLOOD_PRESSURE) ?
                                 p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "N/A") : "-"));
 
-
-        // Needs to be updated to highlight cells instead of rows
-//        monitorTable.setRowFactory(row -> new TableRow<>() {
-//            @Override
-//            public void updateItem(Patient item, boolean empty) {
-//                super.updateItem(item, empty);
-//                if (item == null || empty || item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL) == null) {
-//                    setStyle("");
-//                } else if (monitorManager.get(item).contains(GetMeasurementService.measurementName.CHOLESTEROL_LEVEL) && item.getMeasurement(Measurement.MeasurementType.CHOLESTEROL_LEVEL).getValue() > averageCholesterol) {
-//                    setStyle("-fx-background-color: #F08888;");
-//                }
-//            }
-//        });
-
         nameCol.setMinWidth(170);
         cholCol.setMinWidth(100);
         cholTimeCol.setMinWidth(170);
@@ -249,59 +238,61 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
                                 p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "N/A") : "-"));
 
 
-        // ArrayList<String> monitorItems = monitorManager.get(monitorTable.getSelectionModel().getSelectedItem());
         // set monitored measurements list
         monitorTable.setOnMousePressed(e -> {
             if (e.isPrimaryButtonDown()) {
                 modifyView.getItems().clear();
 
-
                 //set listener to checkbox cell
                 ObservableList<Observation> allObservations = FXCollections.observableArrayList(currentObservations);
 
-                allObservations.forEach(observation -> modifyView.getItems().add(observation.getType()));
+                allObservations.forEach(observation -> {
+                    observation.setSelected(monitorManager.get(monitorTable.getSelectionModel().getSelectedItem())
+                            .contains(observation.getCode()));
 
-//                // initialize the list view
-//                modifyView.setCellFactory(CheckBoxListCell.forListView(Observation::selectedProperty, new StringConverter<Observation>() {
-//                    @Override
-//                    public String toString(Observation observation) {
-//                        return observation.toString();
-//                    }
-//
-//                    @Override
-//                    public Observation fromString(String s) {
-//                        return null;
-//                    }
-//                }));
-                allObservations.forEach(observation -> observation.selectedProperty()
-                    .addListener((observableValue, wasSelected, isSelected) -> {
+                    observation.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
                         if (isSelected) {
-                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
+                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
 
                         }
-                        if (wasSelected && !isSelected) {
-                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
+                        else if (wasSelected) {
+                            monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
                         }
 
                         updateView();
-                    }));
+                    });
+                });
+
+
+                modifyView.getItems().addAll(allObservations);
+
+                // initialize the list view
+                modifyView.setCellFactory(CheckBoxListCell.forListView(Observation::selectedProperty, new StringConverter<Observation>() {
+                    @Override
+                    public String toString(Observation observation) {
+                        return observation.toString();
+                    }
+
+                    @Override
+                    public Observation fromString(String s) {
+                        return null;
+                    }
+                }));
             }
         });
-
-
     }
 
 
     @FXML
     public synchronized void applyChange(){
-        ObservableList<String> monitorItems = modifyView.getSelectionModel().getSelectedItems();
+        ObservableList<Observation> monitorItems = modifyView.getSelectionModel().getSelectedItems();
         Patient p = monitorTable.getSelectionModel().getSelectedItem();
         ArrayList<String> monitoring = monitorManager.get(p);
         monitoring.clear();
-        for (String item : monitorItems){
-            monitoring.add(item);
+        for (Observation item : monitorItems){
+            monitoring.add(item.getCode());
             System.out.println("Apply change");
-            getMeasurementService.updatePatientMeasurement(p, item, this);
+            getMeasurementService.updatePatientMeasurement(p, item.getCode(), this);
         }
         System.out.println("apply ");
         System.out.println(monitorManager.get(p));
@@ -408,13 +399,12 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         for (Map.Entry<Patient, ArrayList<String>> entry : monitorManager.entrySet()) {
             Patient p = entry.getKey();
             ArrayList<String> monitorItems = entry.getValue();
-            System.out.println("Refresh measurement");
-            for (String item : monitorItems){
-                getMeasurementService.updatePatientMeasurement(p, item, this);
+            Iterator<String> iterator = monitorItems.iterator();
+
+            while (iterator.hasNext()) {
+                getMeasurementService.updatePatientMeasurement(p, iterator.next(), this);
             }
         }
-
-
     }
 
     /**

@@ -50,7 +50,7 @@ public class App extends Application {
 
     /**
      * Sets the root scene of the application
-     *
+     *+
      * @param fxmlLoader the loader which loads the new root scene of the application
      * @throws IOException
      */

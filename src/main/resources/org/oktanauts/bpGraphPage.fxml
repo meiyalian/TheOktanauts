@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="270.0"
+            prefWidth="919.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.oktanauts.BPGraphicalController">
+   <ScrollPane fx:id="scrollPane" layoutX="-2.0" layoutY="-3.0" prefHeight="270.0" prefWidth="919.0"/>
+</AnchorPane>

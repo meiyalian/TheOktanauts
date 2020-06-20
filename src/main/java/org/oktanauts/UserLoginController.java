@@ -18,7 +18,6 @@ import org.oktanauts.model.GetPractitionerCallback;
  */
 public class UserLoginController implements GetPractitionerCallback {
 
-
     GetPractitionerService getPractitionerService = new GetPractitionerService();
 
     @FXML public TextField idInput;
@@ -35,7 +34,6 @@ public class UserLoginController implements GetPractitionerCallback {
         if (isValidInput(idInput)){
             getPractitionerService.getPractitioner(idInput.getText(), this);
         }
-
     }
 
     /**
@@ -58,7 +56,7 @@ public class UserLoginController implements GetPractitionerCallback {
             Scene errorPage = new Scene(root);
             Stage newWindow = new Stage();
             newWindow.setScene(errorPage);
-            newWindow.setResizable(false);
+//            newWindow.setResizable(false);
             newWindow.show();
             return false;
         }
@@ -79,6 +77,5 @@ public class UserLoginController implements GetPractitionerCallback {
         mainPage.initData(practitioner);
         Stage window = App.getStage();
         window.show();
-
     }
 }

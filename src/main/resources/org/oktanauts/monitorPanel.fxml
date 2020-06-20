@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.oktanauts.MainPanelController">
-    <SplitPane dividerPositions="0.29797979797979796" layoutY="-5.0" prefHeight="509.0" prefWidth="691.0">
+    <SplitPane dividerPositions="0.20717131474103587" layoutY="2.0" prefHeight="798.0" prefWidth="1205.0">
         <items>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                <VBox layoutX="-4.0" prefHeight="507.0" prefWidth="208.0">
-                    <Label alignment="CENTER" prefHeight="40.0" prefWidth="209.0" text="All Patients"
-                           textAlignment="CENTER">
-                        <font>
-                            <Font name="Arial Bold" size="13.0"/>
-                        </font>
-                    </Label>
-                    <ListView fx:id="patientListView" prefHeight="469.0" prefWidth="208.0"/>
+                <VBox layoutX="-4.0" prefHeight="796.0" prefWidth="252.0">
+                    <children>
+                        <Label alignment="CENTER" prefHeight="40.0" prefWidth="209.0" text="All Patients"
+                               textAlignment="CENTER">
+                            <font>
+                                <Font name="Arial Bold" size="13.0"/>
+                            </font>
+                        </Label>
+                        <ListView fx:id="patientListView" prefHeight="758.0" prefWidth="252.0"/>
+                    </children>
                 </VBox>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="508.0">
-                <SplitPane dividerPositions="0.2043956043956044" layoutX="3.0" layoutY="-2.0" orientation="VERTICAL"
-                           prefHeight="507.0" prefWidth="491.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="787.0" prefWidth="973.0">
+                <SplitPane dividerPositions="0.12262958280657396" layoutX="3.0" layoutY="6.0" orientation="VERTICAL"
+                           prefHeight="793.0" prefWidth="950.0">
                     <items>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="163.0" prefWidth="482.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="92.0" prefWidth="948.0">
                             <Label fx:id="IDdisplay" layoutX="22.0" layoutY="27.0" prefHeight="17.0"
                                    prefWidth="199.0" text="Practitioner ID: "/>
                             <Spinner fx:id="refreshSpinner" layoutX="398.0" layoutY="50.0"
@@ -36,13 +37,24 @@
                                 </valueFactory>
                             </Spinner>
                             <Label layoutX="398.0" layoutY="27.0" text="Refresh Rate"/>
-                            <Button fx:id="backToLogin" layoutX="22.0" layoutY="58.0" mnemonicParsing="false"
+                            <Button fx:id="backToLogin" layoutX="160.0" layoutY="57.0" mnemonicParsing="false"
                                     onAction="#setBackToLogin" text="Log out"/>
-                            <Button fx:id="viewDetail" layoutX="94.0" layoutY="58.0" mnemonicParsing="false"
+                            <Button fx:id="viewDetail" layoutX="16.0" layoutY="57.0" mnemonicParsing="false"
                                     onAction="#viewPatientDetails" text="View patient detail"/>
+                            <ComboBox layoutX="610.0" layoutY="57.0" prefHeight="27.0" prefWidth="105.0"
+                                      fx:id="xCombo"/>
+                            <ComboBox fx:id="yCombo" layoutX="725.0" layoutY="57.0" prefHeight="27.0"
+                                      prefWidth="105.0"/>
+                            <Label alignment="CENTER" layoutX="613.0" layoutY="38.0" prefHeight="17.0"
+                                   prefWidth="101.0" text="x"/>
+                            <Label alignment="CENTER" layoutX="728.0" layoutY="38.0" prefHeight="17.0"
+                                   prefWidth="101.0" text="y"/>
+                            <Button layoutX="843.0" layoutY="57.0" mnemonicParsing="false" onAction="#updateXY"
+                                    text="ok"/>
                         </AnchorPane>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="393.0" prefWidth="494.0">
-                            <BorderPane fx:id="tablePane" prefHeight="398.0" prefWidth="489.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="686.0" prefWidth="948.0">
+                            <BorderPane fx:id="tablePane" layoutX="-6.0" layoutY="-14.0" prefHeight="704.0"
+                                        prefWidth="944.0"/>
                         </AnchorPane>
                     </items>
                 </SplitPane>

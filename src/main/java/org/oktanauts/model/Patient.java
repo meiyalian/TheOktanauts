@@ -3,6 +3,7 @@ package org.oktanauts.model;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,7 +21,8 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private HashMap<String, Measurement> measurements;
+    private HashMap<String, ObservationTracker> observationTrackers;
+
 
     /**
      * Patient Constructor
@@ -34,7 +36,8 @@ public class Patient {
      * @param state the current state that the patient resides in
      * @param country the current country that the patient resides in
      */
-    public Patient(String id, String firstName, String surname, Date dateOfBirth, String gender, String city, String state, String country) {
+    public Patient(String id, String firstName, String surname, Date dateOfBirth, String gender, String city,
+                   String state, String country) {
         this.id = id;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
@@ -43,7 +46,7 @@ public class Patient {
         this.country = country;
         this.firstName = firstName;
         this.surname = surname;
-        this.measurements = new HashMap<>();
+        this.observationTrackers = new HashMap<>();
     }
 
     /**
@@ -154,26 +157,86 @@ public class Patient {
     }
 
     /**
-     * Adds a measurement to the patient's measurement cache
+     * Adds a observation to the patient's observation cache
      *
-     * @param measurement the measurement to be added to the patient's cache
+     * @param observation the observation to be added to the patient's cache
+     * @param position the position the observation gets added in
      */
-    public void addMeasurement(Measurement measurement) {
-        measurements.put(measurement.getCode(), measurement);
+    public void addObservation(Observation observation, int position) {
+        observationTrackers.get(observation.getCode()).addObservation(observation, position);
     }
 
     /**
-     * Gets the specified measurement from the patient's case
+     * Gets the specified observation from the patient's case
      *
-     * @param code the LOINC code of the measurment to get
-     * @return the desired measurement from the cache if it exists
+     * @param observationCode the observation to get
+     * @return the desired observation from the cache if it exists
      */
-    public Measurement getMeasurement(String code) {
-        if (!measurements.containsKey(code)) {
+    public Observation getObservation(String observationCode) {
+        if (!observationTrackers.containsKey(observationCode)) {
             return null;
         }
-        return measurements.get(code);
+        return observationTrackers.get(observationCode).getLatest();
     }
 
+    /**
+     * Returns whether the patient has a specific type of observation recorded
+     *
+     * @param observationCode the LOINC code of the observation to be queried
+     * @return a boolean value indicating whether the patient has the specified observation recorded
+     */
+    public boolean hasObservation(String observationCode) {
+        if (observationTrackers.containsKey(observationCode)) {
+            return observationTrackers.get(observationCode).getCount() > 0;
+        }
+        return false;
+    }
 
+    /**
+     * Returns whether the patient has a specific type of measurement recorded
+     *
+     * @param observationCode the LOINC observation code of the measurement's observation
+     * @param measurementCode the LOINC code of the measurement to be queried
+     * @return a boolean value indicating whether the patient has the specified observation recorded
+     */
+    public boolean hasMeasurement(String observationCode, String measurementCode) {
+        if (observationTrackers.containsKey(observationCode)) {
+            if (observationTrackers.get(observationCode).getCount() > 0) {
+                return observationTrackers.get(observationCode).getLatest().hasMeasurement(measurementCode);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Adds an observation tracker to the patient
+     *
+     * @param observationTracker the new observation tracker to be added
+     */
+    public void addObservationTracker(ObservationTracker observationTracker) {
+        observationTrackers.put(observationTracker.getObservationCode(), observationTracker);
+    }
+
+    /**
+     * Adds a newly generated tracker to the patient
+     *
+     * @param code the LOINC code of the observation to be tracked
+     * @param numOfRecords the number of latest records to be recorded by the tracker
+     */
+    public void addObservationTracker(String code, int numOfRecords) {
+        observationTrackers.put(code, new ObservationTracker(code, numOfRecords,this));
+    }
+
+    /**
+     * Gets the tracker of the specified observation
+     *
+     * @param code the LOINC code of the observation tracker to get
+     * @return the specified observation tracker if it exists
+     */
+    public ObservationTracker getObservationTracker(String code) {
+        if (observationTrackers.containsKey(code)) {
+            return observationTrackers.get(code);
+        }
+        return null;
+    }
 }

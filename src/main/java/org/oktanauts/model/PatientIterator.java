@@ -7,6 +7,11 @@ public class PatientIterator implements Iterator{
     int index;
     PatientList patientList;
 
+    /**
+     * Constructor for PatientIterator
+     *
+     * @param patientList the list of patients to be iterated over
+     */
     public PatientIterator(PatientList patientList) {
         this.patientList = patientList;
     }

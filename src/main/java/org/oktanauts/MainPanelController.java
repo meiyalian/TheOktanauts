@@ -138,7 +138,6 @@ public class MainPanelController implements Initializable {
                 @Override
                 public void run() {
                     tableViewController.refreshMeasurementsData();
-                    System.out.print("Refreshing - " + refreshSpinner.getValue());
                 }
             }, refreshSpinner.getValue() * 1000, refreshSpinner.getValue() * 1000);
         }
@@ -179,7 +178,6 @@ public class MainPanelController implements Initializable {
             @Override
             public void run() {
                 tableViewController.refreshMeasurementsData();
-                System.out.print("Refreshing - " + refreshSpinner.getValue());
             }
         }, 0, refreshSpinner.getValue() * 1000);
 

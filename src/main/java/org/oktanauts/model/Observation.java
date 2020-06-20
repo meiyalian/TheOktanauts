@@ -56,6 +56,12 @@ public class Observation {
         return this.components.get(code);
     }
 
+    /**
+     * Returns whether the observation has a specific measurement
+     *
+     * @param code the LOINC code of the measurement to be queried
+     * @return a boolean value indicating whether the observation has the specified measurement
+     */
     public boolean hasMeasurement(String code) {
         return this.components.containsKey(code);
     }
@@ -69,10 +75,21 @@ public class Observation {
         return this.components;
     }
 
+
+    /**
+     * Adds a measurement to the observation
+     *
+     * @param measurement the measurement to be added
+     */
     public void addMeasurement(Measurement measurement) {
         components.put(measurement.getCode(), measurement);
     }
 
+    /**
+     * Gets the type of observation
+     *
+     * @return the string of the type of observation
+     */
     public String getType(){
         return type;
     }
@@ -95,10 +112,20 @@ public class Observation {
         return isMonitored.get();
     }
 
+    /**
+     * Sets the selected value
+     *
+     * @param isSelected the boolean value of the new isSelected value
+     */
     public void setSelected(boolean isSelected) {
         this.isMonitored = new SimpleBooleanProperty(isSelected);
     }
 
+    /**
+     * Gets the string representation of the observation
+     *
+     * @return the type of the observation
+     */
     @Override
     public String toString() {
         return this.type;

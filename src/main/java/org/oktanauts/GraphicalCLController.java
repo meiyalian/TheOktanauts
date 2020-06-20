@@ -33,24 +33,24 @@ public class GraphicalCLController {
     private XYChart.Series dataSeries = new XYChart.Series();
 
 
-
+    /**
+     * Gets the list of monitored patients
+     *
+     * @return an observable list of the currently monitored patients
+     */
     public ObservableList<Patient> getMonitorList(){
         return monitoredPatients;
     }
 
-
+    /**
+     * Initialises the data for the cholesterol level graph
+     *
+     * @param patients an observable list of patients to be graphed
+     */
     public void initData(ObservableList<Patient> patients){
         this.monitoredPatients = patients;
-//        xAxis = (CategoryAxis) graph.getXAxis();
 
         updateView();
-//        graph.setPrefWidth(1000);
-//        setMaxBarWidth(40, 10);
-//
-//        graph.widthProperty().addListener((obs,b,b1)->{
-//            Platform.runLater(()->setMaxBarWidth(40, 10));
-//        });
-
 
         // add listener to the list in order to update the graph when the monitored patients change
         monitoredPatients.addListener((ListChangeListener<Patient> )change ->{
@@ -62,16 +62,11 @@ public class GraphicalCLController {
                         Measurement m = observation.getMeasurement(CHOLESTEROL_LEVEL);
                         if (m != null){
                             dataSeries.getData().add(new XYChart.Data<String, Double>(p.getName(),m.getValue()));
-//                            graph.setPrefWidth(graph.getData().size()*5);
                             graph.setMaxWidth(graph.getWidth() + 100);
-//                            graph.setBarGap(10);
-
-
                         }
                     }
-
-                }else if (change.wasRemoved()){
-                    System.out.println("remove");
+                }
+                else if (change.wasRemoved()) {
                     ObservableList<XYChart.Data> data = dataSeries.getData();
                     String patientName = change.getRemoved().get(0).getName();
                     int index = 0;
@@ -85,15 +80,16 @@ public class GraphicalCLController {
                         }
                         index ++;
                     }
-
                 }
             }
         });
     }
 
+    /**
+     * Updates the view
+     */
     public void updateView(){
-        //update data of the graph
-//        graph.getData().clear();
+        // update data of the graph
         graph.setData(FXCollections.observableArrayList());
         XYChart.Series newData = new XYChart.Series();
         this.dataSeries = newData;
@@ -105,38 +101,10 @@ public class GraphicalCLController {
                 if (m != null){
                     newData.getData().add(new XYChart.Data<String, Double>(p.getName(),m.getValue()));
                 }
-
             }
         }
 
-
         graph.getData().add(newData);
-//        graph.lookupAll(".default-color0.chart-bar").forEach(n -> n.setStyle("-fx-bar-fill: blue;"));
-//        graph.setBarGap(5);
-//
     }
-
-//    private void setMaxBarWidth(double maxBarWidth, double minCategoryGap){
-//        double barWidth=0;
-//        do{
-//            double catSpace = xAxis.getCategorySpacing();
-//            double avilableBarSpace = catSpace - (graph.getCategoryGap() + graph.getBarGap());
-//            barWidth = (avilableBarSpace / graph.getData().size()) - graph.getBarGap();
-//            if (barWidth >maxBarWidth){
-//                avilableBarSpace=(maxBarWidth + graph.getBarGap())* graph.getData().size();
-//                graph.setCategoryGap(catSpace-avilableBarSpace-graph.getBarGap());
-//            }
-//        } while(barWidth>maxBarWidth);
-//
-//        do{
-//            double catSpace = xAxis.getCategorySpacing();
-//            double avilableBarSpace = catSpace - (minCategoryGap + graph.getBarGap());
-//            barWidth = Math.min(maxBarWidth, (avilableBarSpace / graph.getData().size()) - graph.getBarGap());
-//            avilableBarSpace=(barWidth + graph.getBarGap())* graph.getData().size();
-//            graph.setCategoryGap(catSpace-avilableBarSpace-graph.getBarGap());
-//        } while(barWidth < maxBarWidth && graph.getCategoryGap()>minCategoryGap);
-//    }
-//
-
 }
 

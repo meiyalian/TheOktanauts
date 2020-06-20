@@ -30,8 +30,11 @@ public class BPGraphicalController {
     private ArrayList<LineChart<Number,Number>> graphs = new ArrayList<>();
     private HashMap<Patient, LineChart<Number,Number>> graphManager = new HashMap<>();
 
+    /**
+     * Initialises the data for the blood pressure graphs
+     * @param patients
+     */
     public void initData(ObservableList<Patient> patients){
-
         trackingPatients = patients;
         HBox hBox = new HBox();
         hBox.setSpacing(10);
@@ -64,7 +67,8 @@ public class BPGraphicalController {
                     }
                     graphManager.put(p,lineChart);
                     hBox.getChildren().add(lineChart);
-                }else if (change.wasRemoved()){
+                }
+                else if (change.wasRemoved()) {
                     Patient p = change.getRemoved().get(0);
                     LineChart<Number,Number> chart = graphManager.get(p);
                     graphManager.remove(p);
@@ -75,6 +79,9 @@ public class BPGraphicalController {
         });
     }
 
+    /**
+     * Updates the graphs in the view
+     */
     public void updateView() {
         for (Map.Entry<Patient, LineChart<Number, Number>> entry : graphManager.entrySet()) {
             Patient p = entry.getKey();
@@ -89,9 +96,5 @@ public class BPGraphicalController {
             }
             chart.getData().add(dataSeries);
         }
-        System.out.println("update this graph!!");
     }
-
-
-
 }

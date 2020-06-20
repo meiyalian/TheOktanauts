@@ -13,18 +13,25 @@ public class ObservationTracker {
     private Patient patient;
     private int maxNumOfRecords;
 
-
-    public ObservationTracker(String observationCode, int numberOfRecords, Patient p) {
+    /**
+     * Constructor for the ObservationTracker
+     *
+     * @param observationCode the LOINC code of the observation
+     * @param numberOfRecords the number of records to be recorded
+     * @param patient the patient that is getting tracked
+     */
+    public ObservationTracker(String observationCode, int numberOfRecords, Patient patient) {
         this.observationCode = observationCode;
         this.maxNumOfRecords = numberOfRecords;
         this.records = new ArrayList<>();
-        this.patient = p;
+        this.patient = patient;
     }
 
     /**
      * Adds an measurement to tracker
      *
      * @param observation the latest measurement
+     * @param position the position the observation gets inserted at
      */
     public void addObservation(Observation observation, int position) {
         records.add(position,observation);
@@ -35,7 +42,7 @@ public class ObservationTracker {
     }
 
     /**
-     * set number of records the tracker needs to track
+     * Set number of records the tracker needs to track
      *
      * @param numberOfRecords number of records the tracker needs to track
      */
@@ -46,22 +53,36 @@ public class ObservationTracker {
         }
     }
 
-
+    /**
+     * Gets the patient that is being tracked
+     *
+     * @return the patient being tracked
+     */
     public Patient getPatient() {
-        return patient;
+        return this.patient;
     }
 
+    /**
+     * Gets the LOINC code of the observation being tracked
+     *
+     * @return the string LOINC code of the observation
+     */
     public String getObservationCode() {
         return this.observationCode;
     }
 
+    /**
+     * Gets the current amount of stored observations
+     *
+     * @return the number of records currently stored
+     */
     public int getCount() {
         return this.records.size();
     }
 
 
     /**
-     * display the information of one measurement
+     * Display the information of one measurement
      *
      * @param measurementCode  measurement code
      */
@@ -75,8 +96,9 @@ public class ObservationTracker {
 
 
     /**
-     * get the latest measurement
+     * Gets the latest measurement
      *
+     * @return the measurement that was most recently recorded
      */
     public Observation getLatest() {
         if (records.size() == 0){
@@ -86,8 +108,9 @@ public class ObservationTracker {
     }
 
     /**
-     * get the latest measurement updated time
+     * Get the timestamp of the most recent observation
      *
+     * @return the timestamp of the most recent observation
      */
     public Timestamp getLastUpdated() {
         if (records.size() > 0) {
@@ -98,10 +121,20 @@ public class ObservationTracker {
         }
     }
 
+    /**
+     * Gets the maximum number of records being stored
+     *
+     * @return the maximum number of records to be stored
+     */
     public int getMaxNumOfRecords() {
         return this.maxNumOfRecords;
     }
 
+    /**
+     * Gets all of the records currently stored
+     *
+     * @return an array list of the N most recent observations
+     */
     public ArrayList<Observation> getRecords() {
         return records;
     }

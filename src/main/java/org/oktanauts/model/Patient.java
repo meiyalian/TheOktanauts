@@ -21,7 +21,6 @@ public class Patient {
     private String state;
     private String country;
     private BooleanProperty isMonitored = new SimpleBooleanProperty(false);
-    private HashSet<String> monitoredMeasurements;
     private HashMap<String, ObservationTracker> observationTrackers;
 
 
@@ -37,7 +36,8 @@ public class Patient {
      * @param state the current state that the patient resides in
      * @param country the current country that the patient resides in
      */
-    public Patient(String id, String firstName, String surname, Date dateOfBirth, String gender, String city, String state, String country) {
+    public Patient(String id, String firstName, String surname, Date dateOfBirth, String gender, String city,
+                   String state, String country) {
         this.id = id;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
@@ -156,15 +156,11 @@ public class Patient {
         return isMonitored.get();
     }
 
-
-    public HashSet<String> getMonitoredMeasurements() {
-        return monitoredMeasurements;
-    }
-
     /**
      * Adds a observation to the patient's observation cache
      *
      * @param observation the observation to be added to the patient's cache
+     * @param position the position the observation gets added in
      */
     public void addObservation(Observation observation, int position) {
         observationTrackers.get(observation.getCode()).addObservation(observation, position);
@@ -183,6 +179,12 @@ public class Patient {
         return observationTrackers.get(observationCode).getLatest();
     }
 
+    /**
+     * Returns whether the patient has a specific type of observation recorded
+     *
+     * @param observationCode the LOINC code of the observation to be queried
+     * @return a boolean value indicating whether the patient has the specified observation recorded
+     */
     public boolean hasObservation(String observationCode) {
         if (observationTrackers.containsKey(observationCode)) {
             return observationTrackers.get(observationCode).getCount() > 0;
@@ -190,6 +192,13 @@ public class Patient {
         return false;
     }
 
+    /**
+     * Returns whether the patient has a specific type of measurement recorded
+     *
+     * @param observationCode the LOINC observation code of the measurement's observation
+     * @param measurementCode the LOINC code of the measurement to be queried
+     * @return a boolean value indicating whether the patient has the specified observation recorded
+     */
     public boolean hasMeasurement(String observationCode, String measurementCode) {
         if (observationTrackers.containsKey(observationCode)) {
             if (observationTrackers.get(observationCode).getCount() > 0) {
@@ -199,19 +208,35 @@ public class Patient {
         return false;
     }
 
+    /**
+     * Adds an observation tracker to the patient
+     *
+     * @param observationTracker the new observation tracker to be added
+     */
     public void addObservationTracker(ObservationTracker observationTracker) {
         observationTrackers.put(observationTracker.getObservationCode(), observationTracker);
     }
 
+    /**
+     * Adds a newly generated tracker to the patient
+     *
+     * @param code the LOINC code of the observation to be tracked
+     * @param numOfRecords the number of latest records to be recorded by the tracker
+     */
     public void addObservationTracker(String code, int numOfRecords) {
         observationTrackers.put(code, new ObservationTracker(code, numOfRecords,this));
     }
 
+    /**
+     * Gets the tracker of the specified observation
+     *
+     * @param code the LOINC code of the observation tracker to get
+     * @return the specified observation tracker if it exists
+     */
     public ObservationTracker getObservationTracker(String code) {
         if (observationTrackers.containsKey(code)) {
             return observationTrackers.get(code);
         }
         return null;
     }
-
 }

@@ -65,19 +65,16 @@ public class GetMeasurementService {
                 url += "&_lastUpdated=gt" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(observationTracker.getLastUpdated());
             }
             url += "&_count=" + observationTracker.getMaxNumOfRecords();
-            System.out.println("Find " + observationTracker.getMaxNumOfRecords());
         }
         else {
             observationTracker = new ObservationTracker(code, 1,patient);
             patient.addObservationTracker(observationTracker);
             url += "&_count=1";
-            System.out.println("Find 1");
         }
 
         boolean finished = false;
         int count = 0;
         while (!finished) {
-            System.out.println(url);
             try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String jsonText = readAll(rd);
@@ -120,7 +117,6 @@ public class GetMeasurementService {
                         if (link.getJSONObject(1).getString("relation").equals("next")) {
                             url = link.getJSONObject(1).getString("url");
                         } else {
-                            System.out.println("Time to make like a tree, and get out of here");
                             finished = true;
                         }
                     } else {
@@ -139,21 +135,5 @@ public class GetMeasurementService {
         if (callback != null) {
             callback.updateView();
         }
-
-        System.out.println("Time to leave!");
     }
-
-//    // these are for the [tracking blood pressure history] requirement
-//    public ObservationTracker getNewObservationTracker(Patient p, String observationName, int numberOfRecords){
-//        Observation[] history = trackHistory(p,observationName,numberOfRecords);
-//        return new ObservationTracker(numberOfRecords, p, history);
-//    }
-//
-//
-//    private Observation[] trackHistory (Patient p, String observationName, int numberOfRecords){
-//        Observation[] history = new Observation[numberOfRecords];
-//        // add logic to create measurements and return a list of measurements
-//        //should be in the order of latest -> oldest
-//        return history;
-//    }
 }

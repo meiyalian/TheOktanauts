@@ -19,7 +19,6 @@ public class Measurement {
      * @param unit the unit that the measurement value is expressed in
      */
     public Measurement(String code, String type, double value, String unit) {
-        System.out.println(code + ", " + type + ", " + value + ", " + unit);
         this.code = code;
         this.type = type;
         this.value = value;
@@ -47,6 +46,11 @@ public class Measurement {
      */
     public String toString() { return this.value + " " + this.unit; }
 
+    /**
+     * Gets the type of measurement
+     *
+     * @return the string type of the measurement
+     */
     public String getType(){
         return type;
     }

@@ -34,7 +34,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     @FXML private TableView<Patient> monitorTable;
     @FXML private ListView<Observation> modifyView;
     @FXML TabPane trackingPane;
-    //@FXML Button switchViewBtn;
     @FXML Tab tab1;
     @FXML Tab tab2;
 
@@ -62,7 +61,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     private BPTrackingPageController bpTrackingPageController;
     private BPGraphicalController bpGraphicalController;
 
-
     /**
      * Initialises the table for the view
      *
@@ -75,19 +73,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         currentObservations.add(BP_OBSERVATION);
         measurementAverages.put(CHOLESTEROL_LEVEL, new AverageTracker(CHOLESTEROL_LEVEL, CHOLESTEROL_LEVEL));
 
-//        FXMLLoader tableLoader = new FXMLLoader();
-//        tableLoader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
-//        Pane view = null;
-//        try {
-//            view = tableLoader.load();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        bpTrackingPageController = tableLoader.getController();
-//        bpTrackingPageController.initData(highBPPatient);
-//        trackingPane.setCenter(view);
-
         FXMLLoader loader = new FXMLLoader();
         try {
             loader.setLocation(App.class.getResource("/org/oktanauts/bpTrackingPage.fxml"));
@@ -96,22 +81,22 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             bpTrackingPageController.initData(highBPPatient);
             tab1.setContent(anch1);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("load fail");
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
         loader = new FXMLLoader();
-        try{
+        try {
             loader.setLocation(App.class.getResource("/org/oktanauts/bpGraphPage.fxml"));
             AnchorPane anch2 =  loader.load();
             bpGraphicalController = loader.getController();
             bpGraphicalController.initData(bpTrackingPageController.getTrackingPatients());
             tab2.setContent(anch2);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
-
-        //selectView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         nameCol.setCellValueFactory(p -> new ReadOnlyObjectWrapper(p.getValue().getName()));
 
@@ -213,30 +198,10 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitorTable.setPlaceholder(new Label("No patients being monitored"));
         monitorTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-//        modifyView.setCellFactory(CheckBoxListCell.forListView(item -> {
-//            return item.selectedProperty();
-//        }));
-
-
-
-        //set listener to checkbox cell
-//        ObservableList<Observation> allObservations = FXCollections.observableArrayList(currentObservations);
-//        allObservations.forEach(observation -> observation.selectedProperty()
-//                .addListener((observableValue, wasSelected, isSelected) -> {
-//            if (isSelected) {
-//                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).remove(observation.getCode());
-//
-//            }
-//            if (wasSelected && !isSelected) {
-//                monitorManager.get(monitorTable.getSelectionModel().getSelectedItem()).add(observation.getCode());
-//            }
-//        }));
-
         bpTimeCol.setCellValueFactory(p ->
                 new ReadOnlyObjectWrapper(monitorManager.get(p.getValue()).contains(BLOOD_PRESSURE) ?
                         (p.getValue().hasObservation(BLOOD_PRESSURE) ?
                                 p.getValue().getObservation(BLOOD_PRESSURE).getTimestamp() : "N/A") : "-"));
-
 
         // set monitored measurements list
         monitorTable.setOnMousePressed(e -> {
@@ -282,7 +247,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         });
     }
 
-
+    /**
+     * Updates the monitored measurements of the patients
+     */
     @FXML
     public synchronized void applyChange(){
         ObservableList<Observation> monitorItems = modifyView.getSelectionModel().getSelectedItems();
@@ -291,22 +258,19 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitoring.clear();
         for (Observation item : monitorItems){
             monitoring.add(item.getCode());
-            System.out.println("Apply change");
             getMeasurementService.updatePatientMeasurement(p, item.getCode(), this);
         }
-        System.out.println("apply ");
-        System.out.println(monitorManager.get(p));
 
         updateView();
     }
 
-
+    /**
+     * Loads up the cholesterol level graph window
+     *
+     * @throws IOException
+     */
     @FXML
     public synchronized void CLGraphWindow() throws IOException {
-
-//        ArrayList<Patient> patients = new ArrayList<>();
-
-
         ObservableList<Patient> patients = FXCollections.observableArrayList();
         for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()){
             Patient p = entry.getKey();
@@ -318,8 +282,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
             }
         }
 
-        System.out.println("number :" + patients.size());
-
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(App.class.getResource("/org/oktanauts/graphicalCholesterol.fxml"));
         Parent root = loader.load();
@@ -330,9 +292,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         newWindow.setScene(graphPage);
         newWindow.setResizable(false);
         newWindow.show();
-
     }
-
 
     /**
      * Gets the currently selection patient in the table
@@ -360,7 +320,6 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         monitoredPatients.add(patient);
         monitorManager.put(patient, monitorItems);
 
-        System.out.println("Add patient");
         for (String observation : monitorItems) {
             getMeasurementService.updatePatientMeasurement(patient, observation, null);
         }
@@ -415,7 +374,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
     public void setXYVal(int x, int y){
         this.x = x;
         this.y = y;
-        System.out.println("update!! x: " + this.x);
+        
         updateView();
 
     }
@@ -435,6 +394,9 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
     }
 
+    /**
+     * Updates the list of patients with high blood pressure
+     */
     private void updateHighBPPatient(){
         highBPPatient.clear();
         for (Map.Entry<Patient, ArrayList<String>> entry: monitorManager.entrySet()) {
@@ -452,9 +414,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
         }
         bpTrackingPageController.updateView();
         bpGraphicalController.updateView();
-
     }
-
 
     /**
      * Calculates the average measurement of the monitored patients and highlights any patients that are above it
@@ -469,7 +429,7 @@ public class TableViewController implements Initializable, GetMeasurementCallbac
 
             for (String measurement: measurementAverages.keySet()) {
                 String observationCode = measurementAverages.get(measurement).getObservationCode();
-                if (patient.hasMeasurement(observationCode, measurement)) {
+                if (entry.getValue().contains(measurement) && patient.hasMeasurement(observationCode, measurement)) {
                     measurementAverages.get(measurement).add(patient.getObservation(observationCode)
                             .getMeasurement(measurement).getValue());
                 }

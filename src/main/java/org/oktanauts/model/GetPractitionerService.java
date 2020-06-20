@@ -41,9 +41,8 @@ public class GetPractitionerService {
     /**
      * Populates a practitioner from the data present in the hapi fhir jpaserver
      *
-     * @param practIdentifier the identifier of the practitioner to be queries
+     * @param practIdentifier the identifier of the practitioner to be queried
      * @param callback optional callback for after the practitioner is created
-     * @return newly created practitioner
      */
     public void getPractitioner (String practIdentifier, GetPractitionerCallback callback) throws IOException, ParseException {
         String ids = "";
@@ -57,7 +56,6 @@ public class GetPractitionerService {
         Practitioner p;
 
         while (!finished) {
-            System.out.println(url);
 
             try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
@@ -103,9 +101,6 @@ public class GetPractitionerService {
         int dupeCount = 0;
         int count = 0;
         while (!finished) {
-            System.out.println(count);
-            System.out.println(url);
-
             try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String jsonText = readAll(rd);
@@ -124,9 +119,6 @@ public class GetPractitionerService {
                     JSONArray entries = json.getJSONArray("entry");
 
                     String patientId;
-                    GetPatientService createPatient = new GetPatientService();
-
-                    // subject,name,address,birthDate,gender
 
                     for (int i = 0; i < entries.length(); i++) {
                         JSONObject entry = entries.getJSONObject(i).getJSONObject("resource");

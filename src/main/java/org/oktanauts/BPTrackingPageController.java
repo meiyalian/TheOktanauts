@@ -30,11 +30,13 @@ public class BPTrackingPageController implements GetMeasurementCallback {
     private GetMeasurementService getMeasurementService= new GetMeasurementService();
 
 
-
+    /**
+     * Initialises the data for the blood pressure tracking page
+     * @param patients
+     */
     public void initData(ObservableList<Patient> patients) {
         this.highBPPatient = patients;
         patientsCanAdd.addAll(highBPPatient);
-        System.out.println("patients can add: "+ patientsCanAdd);
         patientList.setItems(patientsCanAdd);
 
 
@@ -65,13 +67,10 @@ public class BPTrackingPageController implements GetMeasurementCallback {
         });
         patientList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-
-
         highBPPatient.addListener((ListChangeListener<Patient>) change ->{
             while (change.next()){
                 if(change.wasAdded()){
                     Patient p = change.getAddedSubList().get(0);
-                    System.out.println("add" + p.getName());
                     if(!patientsCanAdd.contains(p) && !trackingPatients.contains(p)){
                         patientsCanAdd.add(p);
                     }
@@ -87,22 +86,30 @@ public class BPTrackingPageController implements GetMeasurementCallback {
 
     }
 
+    /**
+     * Adds a patient to be tracked
+     *
+     * @param e the action event of the add
+     */
     @FXML
     private synchronized void add(ActionEvent e)  {
-
         ObservableList<Patient> chosenPatients = patientList.getSelectionModel().getSelectedItems();
         for (Patient p: chosenPatients) {
             p.getObservationTracker(BLOOD_PRESSURE).setMaxNumberOfRecords(5);
             if(!trackingPatients.contains(p)){
                 getMeasurementService.updatePatientMeasurement(p,BLOOD_PRESSURE,this);
                 trackingPatients.add(p);
-
             }
-
         }
+
         patientsCanAdd.removeAll(chosenPatients);
     }
 
+    /**
+     * Removes a patient from being tracked
+     *
+     * @param e the action event of the removal
+     */
     @FXML
     private synchronized void remove(ActionEvent e)  {
         ObservableList<Patient> chosenPatients = historyView.getSelectionModel().getSelectedItems();
@@ -116,17 +123,20 @@ public class BPTrackingPageController implements GetMeasurementCallback {
         trackingPatients.removeAll(chosenPatients);
     }
 
+    /**
+     * Updates the view
+     */
     @Override
     public void updateView() {
         historyView.setItems(null);
         historyView.setItems(trackingPatients);
-
-        System.out.println("update in background");
-        System.out.println("tracking patient" + this.trackingPatients);
-        System.out.println("to add: " + this.patientsCanAdd);
-
     }
 
+    /**
+     * Gets an observable list of all of the currently tracked patient
+     *
+     * @return an observable list of patients
+     */
     public ObservableList<Patient> getTrackingPatients(){
         return this.trackingPatients;
     }
